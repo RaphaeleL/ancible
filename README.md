@@ -1,6 +1,6 @@
 # Ancible
 
-A high-performance, C-based reimplementation of Ansible. It mirrors Ansible's declarative, YAML-based playbook interface, but re-engineers the backend for raw speed and minimal dependencies.
+A high-performance, C-based reimplementation of [Ansible](https://www.redhat.com/en/ansible-collaborative). It mirrors Ansible's declarative, YAML-based playbook interface, but re-engineers the backend for raw speed and minimal dependencies.
 
 ## Features
 
