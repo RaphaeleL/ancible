@@ -1,0 +1,10 @@
+{
+  "task": "List files",
+  "changed": true,
+  "failed": false,
+  "msg": "Command executed successfully",
+  "command": {
+    "exit_code": 0,
+    "stdout": "total 24 drwxr-xr-x@ 19 raphaele  staff   608 Jul 31 17:40 . drwxr-xr-x  58 raphaele  staff  1856 Jul 31 17:13 .. drwxr-xr-x@  3 raphaele  staff    96 Jul 31 17:15 .cursor drwxr-xr-x@ 12 raphaele  staff   384 Jul 31 18:27 .git -rw-r--r--@  1 raphaele  staff  4306 Jul 31 18:22 Makefile -rw-r--r--@  1 raphaele  staff  1416 Jul 31 18:25 README.md drwxr-xr-x@  3 raphaele  staff    96 Jul 31 17:40 ancible drwxr-xr-x@  3 raphaele  staff    96 Jul 31 18:28 bin drwxr-xr-x@  6 raphaele  staff   192 Jul 31 18:28 cli -rw-r--r--@  1 raphaele  staff     0 Jul 31 17:26 config.h drwxr-xr-x@  3 raphaele  staff    96 Jul 31 17:26 contrib drwxr-xr-x@ 12 raphaele  staff   384 Jul 31 18:28 core drwxr-xr-x@  2 raphaele  staff    64 Jul 31 17:26 docs drwxr-xr-x@  5 raphaele  staff   160 Jul 31 18:01 examples drwxr-xr-x@  7 raphaele  staff   224 Jul 31 17:30 include drwxr-xr-x@  6 raphaele  staff   192 Jul 31 18:28 modules drwxr-xr-x@  3 raphaele  staff    96 Jul 31 17:26 runtime drwxr-xr-x@  3 raphaele  staff    96 Jul 31 17:26 tests drwxr-xr-x@  6 raphaele  staff   192 Jul 31 18:28 transport "
+  }
+}

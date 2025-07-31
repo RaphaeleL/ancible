@@ -1,0 +1,6 @@
+---
+- hosts: all
+  tasks:
+    - name: Echo a message
+      command:
+        cmd: echo "Hello from Ancible!"

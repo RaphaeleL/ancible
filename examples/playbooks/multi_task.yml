@@ -1,0 +1,14 @@
+---
+- hosts: all
+  tasks:
+    - name: First task
+      command: echo "This is the first task"
+      
+    - name: Second task
+      command: echo "This is the second task"
+      
+    - name: Third task
+      command: echo "This is the third task"
+
+    - name: Fourth task
+      command: cat ~/.bash_profile 

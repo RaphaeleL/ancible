@@ -1,0 +1,10 @@
+{
+  "task": "Test task",
+  "changed": true,
+  "failed": false,
+  "msg": "Command executed successfully",
+  "command": {
+    "exit_code": 0,
+    "stdout": "Command not found for task Test task "
+  }
+}

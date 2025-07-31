@@ -1,0 +1,7 @@
+---
+- hosts: all
+  tasks:
+    - name: Get system information
+      command: uname -a
+    - name: List files
+      command: ls /

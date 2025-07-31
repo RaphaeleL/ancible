@@ -1,0 +1,20 @@
+---
+- hosts: all
+  tasks:
+    - name: Check operating system
+      command: uname -a
+
+    - name: List running processes
+      shell: ps aux | head -5
+
+    - name: Check disk space
+      command: df -h
+
+    - name: Check memory usage
+      shell: free -m || vm_stat
+
+    - name: Check network interfaces
+      shell: ifconfig || ip addr
+
+    - name: Check system uptime
+      command: uptime

@@ -1,0 +1,11 @@
+{
+  "task": "test_task",
+  "changed": true,
+  "failed": false,
+  "msg": "Test message",
+  "command": {
+    "exit_code": 0,
+    "stdout": "Test stdout",
+    "stderr": "Test stderr"
+  }
+}

@@ -1,0 +1,138 @@
+# Ancible
+
+A high-performance, C-based reimplementation of Ansible. It mirrors Ansible's declarative, YAML-based playbook interface, but re-engineers the backend for raw speed and minimal dependencies.
+
+## Features
+
+- **High Performance**: Pure C implementation for maximum speed and efficiency
+- **Minimal Dependencies**: Lightweight design with few external dependencies
+- **Compatible Interface**: Uses the same YAML playbook format as Ansible
+- **Inventory Management**: Supports INI-style inventory files with groups
+- **Flexible Execution**: Run commands locally or remotely via SSH
+- **Module System**: Extensible module architecture (currently supports command/shell)
+- **State Tracking**: Maintains execution state and results in JSON format
+- **Cross-Platform**: Works on Linux, macOS, and other Unix-like systems
+- **Fast Startup**: No Python interpreter overhead, instant execution
+
+## Building
+
+```bash
+make
+```
+
+## Running
+
+```bash
+./bin/ancible-playbook -i inventory.ini playbook.yml
+```
+
+### Options
+
+- `--help`: Display help message
+- `-v, --verbose`: Increase verbosity
+- `-i INVENTORY`: Specify inventory file (default: ./inventory.ini)
+
+### Example Playbooks
+
+The `examples/playbooks/` directory contains several sample playbooks:
+
+- `1_simple.yml` - Basic system commands (hostname, whoami, date)
+- `2_multiple_tasks.yml` - Multiple system information tasks
+- `3_file_operations.yml` - File creation and manipulation
+- `4_cpu_intense.yml` - CPU-intensive operations
+- `5_network_operations.yml` - Network connectivity checks
+- `6_system_admin.yml` - System administration tasks
+- `7_security_checks.yml` - Security auditing operations
+- `8_database_operations.yml` - Database-related tasks
+
+Run an example with:
+
+```bash
+./bin/ancible-playbook -i examples/inventory_local.ini examples/playbooks/1_simple.yml
+```
+
+## Project Structure
+
+```
+ancible/
+├── bin/                      # Compiled executables
+├── cli/                      # Command-line interface code
+│   ├── args.c                # Command-line argument parsing
+│   └── main.c                # Main entry point
+├── core/                     # Core engine components
+│   ├── context.c             # Execution context management
+│   ├── executor.c            # Task execution engine
+│   ├── inventory.c           # Host inventory parser
+│   ├── parser.c              # YAML playbook parser
+│   └── state.c               # Runtime state management
+├── examples/                 # Example playbooks and inventory files
+│   ├── inventory.ini         # Sample multi-host inventory
+│   ├── inventory_local.ini   # Local-only inventory
+│   └── playbooks/            # Example playbook collection
+├── include/                  # Header files
+│   ├── ancible.h             # Main header
+│   ├── cli/                  # CLI headers
+│   ├── core/                 # Core engine headers
+│   ├── modules/              # Module system headers
+│   └── transport/            # Transport layer headers
+├── modules/                  # Module implementations
+│   ├── command.c             # Command module
+│   └── module.c              # Module system core
+├── runtime/                  # Runtime state storage
+│   └── state/                # Per-host state data
+├── tests/                    # Test suite
+│   └── unit/                 # Unit tests
+└── transport/                # Transport implementations
+    ├── runner.c              # Command execution abstraction
+    └── ssh.c                 # SSH transport
+```
+
+## Testing
+
+```bash
+make test
+```
+
+## Performance
+
+| ID | Playbook            | Ancible | Ansible | 
+|----|---------------------|---------|---------| 
+| 01 | Simple Echo         | 0.113s  | 1.454s  | 
+| 02 | Multiple Tasks      | 0.115s  | 1.897s  | 
+| 03 | File Operations     | 0.141s  | 2.087s  | 
+| 04 | CPU Intense Tasks   | 0.363s  | 2.126s  | 
+| 05 | Network Operations  | 2.094s  | 4.186s  | 
+| 06 | System Admin Stuff  | 0.119s  | 1.813s  | 
+| 07 | Security Checks     | 0.019s  | 1.157s  | 
+| 08 | Database Operations | 0.064s  | 1.509s  | 
+
+## Future Development (TODO)
+
+The following features are planned for future implementation:
+
+### Core Features
+
+- [x] Execute Basic Playbooks
+- [ ] Blocks: Support for task grouping and error handling with blocks
+- [ ] Conditional Execution: Support for `when` conditionals
+- [ ] Variable Registration: Support for `register` to capture command output
+
+### Additional Modules
+
+- [ ] File module (create, delete, chmod)
+- [ ] Copy module
+- [ ] Template module
+- [ ] Service module
+- [ ] Package module
+- [ ] Git module
+
+### Infrastructure
+
+- [ ] Better error handling and reporting
+- [ ] Support for roles and includes
+- [ ] Variable templating with Jinja2-like syntax
+- [ ] Colored Output
+
+## License
+
+MIT

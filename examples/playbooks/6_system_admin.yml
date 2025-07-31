@@ -1,0 +1,20 @@
+---
+- hosts: all
+  tasks:
+    - name: List all users
+      command: cut -d':' -f1 /etc/passwd
+
+    - name: Show current logged-in users
+      command: who
+
+    - name: Check system load average
+      command: uptime
+
+    - name: List installed packages
+      shell: dpkg -l | head -10 || rpm -qa | head -10 || brew list | head -10
+
+    - name: Check service status
+      shell: systemctl status sshd || service sshd status || launchctl list | grep ssh
+
+    - name: Check cron jobs
+      shell: crontab -l || echo "No crontab for $(whoami)"
