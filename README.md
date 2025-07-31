@@ -95,6 +95,8 @@ make test
 
 ## Performance
 
+Ancible has been benchmarked against Ansible for various playbooks. The results show significant performance improvements across different types of tasks.
+
 | ID | Playbook            | Ancible | Ansible | 
 |----|---------------------|---------|---------| 
 | 01 | Simple Echo         | 0.113s  | 1.454s  | 
