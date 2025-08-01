@@ -110,7 +110,7 @@ Ancible has been benchmarked against Ansible for various playbooks. The results 
 | [#07](./examples/playbooks/7_security_checks.yml) -      Security Checks     | 0.019s  | 1.157s  | 1.138s | 5989.47% | 60.89x  |
 | [#08](./examples/playbooks/8_database_operations.yml) -  Database Operations | 0.064s  | 1.509s  | 1.445s | 2257.81% | 23.55x  |
 | [#09](./examples/playbooks/9_conditions.yml) -           Conditions          | 0.076s  | 2.708s  | 2.632s | 3463.16% | 35.63x  |
-| [#10](./examples/playbooks/10_blocks.ymlyml) -           Blocks              | 0.051s  | 2.264s  | 2.213s | 4349.02% | 44.39x  |
+| [#10](./examples/playbooks/10_blocks.yml) -              Blocks              | 0.051s  | 2.264s  | 2.213s | 4349.02% | 44.39x  |
 
 > <sup>(1) ansible - ancible </sup>
 
