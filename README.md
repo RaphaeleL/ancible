@@ -102,7 +102,7 @@ Ancible has been benchmarked against Ansible for various playbooks. The results 
 | [#3](./examples/playbooks/3_file_operations.yml) -      File Operations     | 0.141s  | 2.087s  | 
 | [#4](./examples/playbooks/4_cpu_intense.yml) -          CPU Intense Tasks   | 0.363s  | 2.126s  | 
 | [#5](./examples/playbooks/5_network_operations.yml) -   Network Operations  | 2.094s  | 4.186s  | 
-| [#6](./examples/playbooks/6_system_admin.yml) -         System Admin Stuff  | 0.119s  | 1.813s  | 
+| [#6](./examples/playbooks/6_system_admin.yml) -         System Admin Stuff  | 0.062s  | 1.813s  | 
 | [#7](./examples/playbooks/7_security_checks.yml) -      Security Checks     | 0.019s  | 1.157s  | 
 | [#8](./examples/playbooks/8_database_operations.yml) -  Database Operations | 0.064s  | 1.509s  | 
 
