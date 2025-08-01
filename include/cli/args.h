@@ -7,6 +7,7 @@
 struct cli_options {
     int help;              // Whether --help was specified
     int verbose;           // Whether --verbose was specified
+    int color;             // Whether color output is enabled (not used in this MVP)
     const char *playbook_path;  // Path to the playbook file
     const char *inventory_path; // Path to the inventory file
 };
