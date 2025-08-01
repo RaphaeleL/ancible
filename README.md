@@ -97,16 +97,16 @@ make test
 
 Ancible has been benchmarked against Ansible for various playbooks. The results show significant performance improvements across different types of tasks.
 
-| ID | Playbook            | Ancible | Ansible | 
-|----|---------------------|---------|---------| 
-| 01 | Simple Echo         | 0.113s  | 1.454s  | 
-| 02 | Multiple Tasks      | 0.115s  | 1.897s  | 
-| 03 | File Operations     | 0.141s  | 2.087s  | 
-| 04 | CPU Intense Tasks   | 0.363s  | 2.126s  | 
-| 05 | Network Operations  | 2.094s  | 4.186s  | 
-| 06 | System Admin Stuff  | 0.119s  | 1.813s  | 
-| 07 | Security Checks     | 0.019s  | 1.157s  | 
-| 08 | Database Operations | 0.064s  | 1.509s  | 
+| Playbook                                                                    | Ancible | Ansible | 
+|-----------------------------------------------------------------------------|---------|---------| 
+| [#1](./examples/playbooks/1_simple.yml) -               Simple Echo         | 0.113s  | 1.454s  | 
+| [#2](./examples/playbooks/2_multiple_tasks.yml) -       Multiple Tasks      | 0.115s  | 1.897s  | 
+| [#3](./examples/playbooks/3_file_operations.yml) -      File Operations     | 0.141s  | 2.087s  | 
+| [#4](./examples/playbooks/4_cpu_intense.yml) -          CPU Intense Tasks   | 0.363s  | 2.126s  | 
+| [#5](./examples/playbooks/5_network_operations.yml) -   Network Operations  | 2.094s  | 4.186s  | 
+| [#6](./examples/playbooks/6_system_admin.yml) -         System Admin Stuff  | 0.119s  | 1.813s  | 
+| [#7](./examples/playbooks/7_security_checks.yml) -      Security Checks     | 0.019s  | 1.157s  | 
+| [#8](./examples/playbooks/8_database_operations.yml) -  Database Operations | 0.064s  | 1.509s  | 
 
 ## Future Development (TODO)
 
