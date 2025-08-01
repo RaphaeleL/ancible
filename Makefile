@@ -1,8 +1,6 @@
-# SPDX-License-Identifier: GPL-2.0
-
 # Compiler and flags
 CC = clang
-CFLAGS = -Wall -Wextra -Werror -std=c99 -pedantic
+CFLAGS = -Wall -Wextra -Werror -std=c99 -pedantic -O3
 INCLUDES = -I./include
 
 # Directories
