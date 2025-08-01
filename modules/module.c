@@ -46,6 +46,7 @@ void module_result_print(const module_result_t *result) {
     printf("Module Result:\n");
     printf("  Changed: %s\n", result->changed ? "yes" : "no");
     printf("  Failed: %s\n", result->failed ? "yes" : "no");
+    printf("  Skipped: %s\n", result->skipped ? "yes" : "no");
     printf("  Message: %s\n", result->msg ? result->msg : "(none)");
     
     if (result->cmd_result.stdout_data || result->cmd_result.stderr_data) {

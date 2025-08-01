@@ -11,6 +11,7 @@
 typedef struct {
     int changed;         // Whether the module made changes
     int failed;          // Whether the module failed
+    int skipped;         // Whether the module was skipped
     char *msg;           // Message from the module
     command_result_t cmd_result;  // Command result (if applicable)
 } module_result_t;

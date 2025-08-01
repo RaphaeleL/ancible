@@ -4,17 +4,11 @@
     - name: Check operating system
       command: uname -a
 
-    - name: List running processes
-      command: ps aux | head -5
-
     - name: Check disk space
       command: df -h
 
-    - name: Check memory usage
-      command: free -m || vm_stat
-
     - name: Check network interfaces
-      command: ifconfig || ip addr
+      command: ifconfig
 
     - name: Check system uptime
       command: uptime

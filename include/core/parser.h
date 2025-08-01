@@ -9,6 +9,7 @@ typedef struct {
     int task_count;       // Number of tasks
     char **task_names;    // Array of task names
     char **task_modules;  // Array of task module names
+    char **task_whens;    // Array of task when conditions (may be NULL if no condition)
 } playbook_t;
 
 /**

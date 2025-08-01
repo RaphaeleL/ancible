@@ -28,28 +28,34 @@ void print_usage(const char *program_name) {
 }
 
 /**
- * Print colord messages to stdout if verbose and colored mode is enabled
+ * Print colored messages to stdout
+ * 
+ * This function always prints, regardless of verbose mode
+ * If color is enabled, it will colorize the output based on status
  */
-void acout(struct cli_options options, int status, const char *fmt, ...) {
-    if (!options.verbose) {
-        if (options.color) {
-            if (status > 0) {
-                printf("\033[32m");
-            } else if (status == 0) {
-                printf("\033[33m");
-            } else {
-                printf("\033[31m");
-            }
-        }
+void acout(struct cli_options options, module_result_t result, const char *fmt, ...) {
+    const char *green = "\033[1;32m";
+    const char *yellow = "\033[1;33m";
+    const char *red = "\033[1;31m";
+    const char *reset = "\033[0m";
 
-        va_list args;
-        va_start(args, fmt);
-        vprintf(fmt, args);
-        va_end(args);
+    const char *no_color = "";
 
-        if (options.color) {
-            printf("\033[0m");
-        }
+    if (result.changed) {
+        printf("%s[CHANGED] %s", options.color ? green : no_color, reset);
+    } else if (result.skipped) {
+        printf("%s[SKIPPED] %s", options.color ? yellow : no_color, reset);
+    } else {
+        printf("%s[OK] %s", options.color ? red : no_color, reset);
+    }
+
+    va_list args;
+    va_start(args, fmt);
+    vprintf(fmt, args);
+    va_end(args);
+
+    if (options.color) {
+        printf("\033[0m");  // Reset color
     }
 }
 
@@ -239,8 +245,7 @@ int main(int argc, char *argv[]) {
                 // Execute task
                 module_result_t result;
                 if (executor_run_task(context, i, args, &result) == ANCIBLE_SUCCESS) {
-                    acout(options, result.changed, "%s|%s\n", result.changed ? "changed" : "ok", playbook.task_names[i]);
-                    cout(options.verbose, "%s : %s\n", host->name, result.failed ? "FAILED" : (result.changed ? "CHANGED" : "SUCCESS"));
+                    acout(options, result, "%s\n", playbook.task_names[i]);
                     
                     if (result.msg) {
                         cout(options.verbose, "  Message: %s\n", result.msg);
@@ -259,8 +264,7 @@ int main(int argc, char *argv[]) {
                     
                     module_result_free(&result);
                 } else {
-                    printf("%s : ERROR\n", host->name);
-                    printf("  Failed to execute task\n");
+                    acout(options, result, "[ERROR] %s\n", playbook.task_names[i]);
                 }
             }
         }
