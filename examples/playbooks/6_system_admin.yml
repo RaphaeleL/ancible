@@ -11,10 +11,10 @@
       command: uptime
 
     - name: List installed packages
-      shell: dpkg -l | head -10 || rpm -qa | head -10 || brew list | head -10
+      command: dpkg -l | head -10 || rpm -qa | head -10 || brew list | head -10
 
     - name: Check service status
-      shell: systemctl status sshd || service sshd status || launchctl list | grep ssh
+      command: systemctl status sshd || service sshd status || launchctl list | grep ssh
 
     - name: Check cron jobs
-      shell: crontab -l || echo "No crontab for $(whoami)"
+      command: crontab -l || echo "No crontab for $(whoami)"

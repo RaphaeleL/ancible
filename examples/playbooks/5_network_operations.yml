@@ -5,13 +5,13 @@
       command: ping -c 3 8.8.8.8
 
     - name: Get public IP address
-      shell: curl -s https://api.ipify.org || curl -s https://ifconfig.me
+      command: curl -s https://api.ipify.org || curl -s https://ifconfig.me
 
     - name: Check DNS resolution
-      shell: dig +short google.com || nslookup google.com
+      command: dig +short google.com || nslookup google.com
 
     - name: Check open ports
-      shell: netstat -tuln || ss -tuln
+      command: netstat -tuln || ss -tuln
 
     - name: Check HTTP status of a website
-      shell: curl -s -o /dev/null -w "%{http_code}" https://www.example.com
+      command: curl -s -o /dev/null -w "%{http_code}" https://www.example.com
