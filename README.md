@@ -57,34 +57,32 @@ Run an example with:
 ancible/
 ├── bin/                      # Compiled executables
 ├── cli/                      # Command-line interface code
-│   ├── args.c                # Command-line argument parsing
-│   └── main.c                # Main entry point
+│   ├── args.c                # - Command-line argument parsing
+│   └── main.c                # - Main entry point
 ├── core/                     # Core engine components
-│   ├── context.c             # Execution context management
-│   ├── executor.c            # Task execution engine
-│   ├── inventory.c           # Host inventory parser
-│   ├── parser.c              # YAML playbook parser
-│   └── state.c               # Runtime state management
+│   ├── context.c             # - Execution context management
+│   ├── executor.c            # - Task execution engine
+│   ├── inventory.c           # - Host inventory parser
+│   ├── parser.c              # - YAML playbook parser
+│   └── state.c               # - Runtime state management
 ├── examples/                 # Example playbooks and inventory files
-│   ├── inventory.ini         # Sample multi-host inventory
-│   ├── inventory_local.ini   # Local-only inventory
-│   └── playbooks/            # Example playbook collection
+│   ├── inventory.ini         # - Sample multi-host inventory
+│   ├── inventory_local.ini   # - Local-only inventory
+│   └── playbooks/            # - Example playbook collection
 ├── include/                  # Header files
-│   ├── ancible.h             # Main header
-│   ├── cli/                  # CLI headers
-│   ├── core/                 # Core engine headers
-│   ├── modules/              # Module system headers
-│   └── transport/            # Transport layer headers
+│   ├── ancible.h             # - Main header
+│   ├── cli/                  # - CLI headers
+│   ├── core/                 # - Core engine headers
+│   ├── modules/              # - Module system headers
+│   └── transport/            # - Transport layer headers
 ├── modules/                  # Module implementations
-│   ├── command.c             # Command module
-│   └── module.c              # Module system core
-├── runtime/                  # Runtime state storage
-│   └── state/                # Per-host state data
-├── tests/                    # Test suite
-│   └── unit/                 # Unit tests
+│   ├── command.c             # - Command module
+│   └── module.c              # - Module system core
+├── runtime/state/            # Runtime state storage Per-Host
+├── tests/unit/               # Unit tests
 └── transport/                # Transport implementations
-    ├── runner.c              # Command execution abstraction
-    └── ssh.c                 # SSH transport
+    ├── runner.c              # - Command execution abstraction
+    └── ssh.c                 # - SSH transport
 ```
 
 ## Testing
