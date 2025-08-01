@@ -106,11 +106,13 @@ Ancible has been benchmarked against Ansible for various playbooks. The results 
 | [#7](./examples/playbooks/7_security_checks.yml) -      Security Checks     | 0.019s  | 1.157s  | 
 | [#8](./examples/playbooks/8_database_operations.yml) -  Database Operations | 0.064s  | 1.509s  | 
 
-## Future Development (TODO)
+## Future Development (aka TODO List)
 
-The following features are planned for future implementation:
+The following features are planned for future implementation, some are necessary to fully replace Ansible's functionality, while others are more like an incentive to gain more features and improve the user experience.
 
 ### Core Features
+
+Those features are necessary to run playbooks, they are not strictly necessary to run the `command` module, but they are needed to fully replace Ansible's functionality.
 
 - [x] Execute Basic Playbooks
 - [ ] Blocks: Support for task grouping and error handling with blocks
@@ -118,6 +120,8 @@ The following features are planned for future implementation:
 - [ ] Variable Registration: Support for `register` to capture command output
 
 ### Additional Modules
+
+While using the `command` module, you can run any command on the remote host, you can copy, use git or create files. Thereby we only need them to fully replace Ansible's functionality, but they are not strictly necessary to run playbooks, since the `command` module can execute any command. However, you can see this as an incentive to implement these modules.
 
 - [ ] File module (create, delete, chmod)
 - [ ] Copy module
@@ -128,10 +132,12 @@ The following features are planned for future implementation:
 
 ### Infrastructure
 
+Here are some features that are not strictly necessary to run playbooks, but they would improve the user experience and make Ancible more powerful. Like the Additional Modules, those are more like an incentive to implement them, to fully replace Ansible's functionality.
+
+- [x] Colored Output
 - [ ] Better error handling and reporting
 - [ ] Support for roles and includes
 - [ ] Variable templating with Jinja2-like syntax
-- [ ] Colored Output
 
 ## License
 
