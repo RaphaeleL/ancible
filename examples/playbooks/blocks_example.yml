@@ -1,0 +1,40 @@
+---
+# Example playbook demonstrating blocks for task grouping and error handling
+- hosts: all
+  tasks:
+    - name: Task outside any block
+      command: echo "This task is outside any block"
+
+    # Simple block for task grouping
+    - name: Basic block example
+      block:
+        - name: Task 1 in block
+          command: echo "This is task 1 in the block"
+        
+        - name: Task 2 in block
+          command: echo "This is task 2 in the block"
+
+    # Block with when condition
+    - name: Conditional block
+      block:
+        - name: Task in conditional block
+          command: echo "This task runs only if the block condition is true"
+        
+        - name: Another task in conditional block
+          command: echo "This task also runs only if the block condition is true"
+      when: true
+
+    # Block with error handling
+    - name: Block with error handling
+      block:
+        - name: Task that might fail
+          command: ls /nonexistent_directory
+        
+        - name: This task won't run if previous task fails
+          command: echo "This task runs only if previous task succeeds"
+      rescue:
+        - name: Error handling task
+          command: echo "An error occurred in the block"
+      always:
+        - name: Cleanup task
+          command: echo "This task always runs, regardless of success or failure"

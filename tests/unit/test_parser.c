@@ -21,10 +21,10 @@ int main(void) {
         assert(playbook.hosts != NULL);
         assert(strcmp(playbook.hosts, "all") == 0);
         assert(playbook.task_count == 1);
-        assert(playbook.task_names != NULL);
-        assert(playbook.task_modules != NULL);
-        assert(strcmp(playbook.task_names[0], "Echo a message") == 0);
-        assert(strcmp(playbook.task_modules[0], "command") == 0);
+        assert(playbook.tasks[0].name != NULL);
+        assert(playbook.tasks[0].module != NULL);
+        assert(strcmp(playbook.tasks[0].name, "Echo a message") == 0);
+        assert(strcmp(playbook.tasks[0].module, "command") == 0);
         
         playbook_free(&playbook);
         printf("OK\n");

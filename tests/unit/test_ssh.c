@@ -42,11 +42,10 @@ static playbook_t *create_test_playbook(void) {
     playbook->hosts = strdup("all");
     playbook->task_count = 1;
     
-    playbook->task_names = malloc(sizeof(char *));
-    playbook->task_modules = malloc(sizeof(char *));
+    playbook->tasks = malloc(sizeof(task_t));
     
-    playbook->task_names[0] = strdup("Test task");
-    playbook->task_modules[0] = strdup("command");
+    playbook->tasks[0].name = strdup("Test task");
+    playbook->tasks[0].module = strdup("command");
     
     return playbook;
 }
@@ -60,12 +59,11 @@ static void free_test_playbook(playbook_t *playbook) {
     free(playbook->hosts);
     
     for (int i = 0; i < playbook->task_count; i++) {
-        free(playbook->task_names[i]);
-        free(playbook->task_modules[i]);
+        free(playbook->tasks[i].name);
+        free(playbook->tasks[i].module);
     }
     
-    free(playbook->task_names);
-    free(playbook->task_modules);
+    free(playbook->tasks);
     free(playbook);
 }
 

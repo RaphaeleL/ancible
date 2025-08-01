@@ -50,7 +50,7 @@ $(ANCIBLE_PLAYBOOK): $(CLI_OBJ) $(CORE_OBJ) $(TRANSPORT_OBJ) $(MODULES_OBJ)
 clean:
 	rm -f $(CLI_DIR)/*.o $(CORE_DIR)/*.o $(MODULES_DIR)/*.o $(TRANSPORT_DIR)/*.o
 	rm -f $(ANCIBLE_PLAYBOOK)
-	rm -f $(TEST_CLI) $(TEST_ARGS) $(TEST_PARSER) $(TEST_INVENTORY) $(TEST_CONTEXT) $(TEST_RUNNER) $(TEST_SSH) $(TEST_COMMAND) $(TEST_COMMAND_MODULE) $(TEST_EXECUTOR) $(TEST_STATE) $(TEST_CONDITION)
+	rm -f $(TEST_CLI) $(TEST_ARGS) $(TEST_PARSER) $(TEST_INVENTORY) $(TEST_CONTEXT) $(TEST_RUNNER) $(TEST_SSH) $(TEST_COMMAND) $(TEST_COMMAND_MODULE) $(TEST_EXECUTOR) $(TEST_STATE) $(TEST_CONDITION) $(TEST_BLOCKS)
 
 # Test executables
 TEST_CLI = $(TEST_DIR)/test_cli
@@ -65,8 +65,10 @@ TEST_COMMAND_MODULE = $(TEST_DIR)/test_command_module
 TEST_EXECUTOR = $(TEST_DIR)/test_executor
 TEST_STATE = $(TEST_DIR)/test_state
 TEST_CONDITION = $(TEST_DIR)/test_condition
+TEST_BLOCKS = $(TEST_DIR)/test_blocks
+
 # Run tests
-test: $(ANCIBLE_PLAYBOOK) $(TEST_CLI) $(TEST_ARGS) $(TEST_PARSER) $(TEST_INVENTORY) $(TEST_CONTEXT) $(TEST_RUNNER) $(TEST_SSH) $(TEST_COMMAND) $(TEST_COMMAND_MODULE) $(TEST_EXECUTOR) $(TEST_STATE) $(TEST_CONDITION)
+test: $(ANCIBLE_PLAYBOOK) $(TEST_CLI) $(TEST_ARGS) $(TEST_PARSER) $(TEST_INVENTORY) $(TEST_CONTEXT) $(TEST_RUNNER) $(TEST_SSH) $(TEST_COMMAND) $(TEST_COMMAND_MODULE) $(TEST_EXECUTOR) $(TEST_STATE) $(TEST_CONDITION) $(TEST_BLOCKS)
 	@echo "Running unit tests..."
 	@cd $(TEST_DIR) && ./test_cli
 	@cd $(TEST_DIR) && ./test_args
@@ -80,6 +82,7 @@ test: $(ANCIBLE_PLAYBOOK) $(TEST_CLI) $(TEST_ARGS) $(TEST_PARSER) $(TEST_INVENTO
 	@cd $(TEST_DIR) && ./test_executor
 	@cd $(TEST_DIR) && ./test_state
 	@cd $(TEST_DIR) && ./test_condition
+	@cd $(TEST_DIR) && ./test_blocks
 # Build test_cli
 $(TEST_CLI): $(TEST_DIR)/test_cli.c
 	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $^
@@ -126,6 +129,10 @@ $(TEST_STATE): $(TEST_DIR)/test_state.c $(CORE_DIR)/state.o $(MODULES_DIR)/modul
 
 # Build test_condition
 $(TEST_CONDITION): $(TEST_DIR)/test_condition.c $(CORE_DIR)/condition.o $(CORE_DIR)/context.o
+	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $^
+
+# Build test_blocks
+$(TEST_BLOCKS): $(TEST_DIR)/test_blocks.c $(CORE_DIR)/parser.o $(CORE_DIR)/executor.o $(CORE_DIR)/condition.o $(MODULES_DIR)/module.o $(MODULES_DIR)/command.o $(TRANSPORT_DIR)/runner.o $(TRANSPORT_DIR)/ssh.o $(CORE_DIR)/context.o
 	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $^
 
 .PHONY: all prepare clean test

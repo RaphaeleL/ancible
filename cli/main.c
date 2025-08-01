@@ -36,17 +36,20 @@ void print_usage(const char *program_name) {
 void acout(struct cli_options options, module_result_t result, const char *fmt, ...) {
     const char *green = "\033[1;32m";
     const char *yellow = "\033[1;33m";
+    const char *orange = "\033[1;35m";
     const char *red = "\033[1;31m";
     const char *reset = "\033[0m";
 
     const char *no_color = "";
 
     if (result.changed) {
-        printf("%s[CHANGED] %s", options.color ? green : no_color, reset);
+        printf("%s[CHANGED] %s", options.color ? yellow : no_color, reset);
     } else if (result.skipped) {
-        printf("%s[SKIPPED] %s", options.color ? yellow : no_color, reset);
+        printf("%s[SKIPPED] %s", options.color ? orange : no_color, reset);
+    } else if (result.failed) {
+        printf("%s[FAILED] %s", options.color ? red : no_color, reset);
     } else {
-        printf("%s[OK] %s", options.color ? red : no_color, reset);
+        printf("%s[OK] %s", options.color ? green : no_color, reset);
     }
 
     va_list args;
@@ -186,7 +189,43 @@ int main(int argc, char *argv[]) {
             cout(options.verbose, "\nRunning tasks for host %s:\n", host->name);
             
             for (int i = 0; i < playbook.task_count; i++) {
-                cout(options.verbose, "\nTASK [%s] *************\n", playbook.task_names[i]);
+                // Only handle top-level tasks (no parent)
+                if (playbook.tasks[i].parent_idx >= 0) {
+                    continue;
+                }
+                
+                // Handle blocks
+                if (playbook.tasks[i].type == TASK_TYPE_BLOCK) {
+                    cout(options.verbose, "\nBLOCK [%s] *************\n", 
+                         playbook.tasks[i].name ? playbook.tasks[i].name : "unnamed");
+                    
+                    module_result_t result;
+                    module_result_init(&result);
+                    
+                    if (executor_run_task(context, i, NULL, &result) == ANCIBLE_SUCCESS) {
+                        acout(options, result, "%s\n", 
+                              playbook.tasks[i].name ? playbook.tasks[i].name : "unnamed");
+                        if (result.msg) {
+                            cout(options.verbose, "  Message: %s\n", result.msg);
+                        }
+                    } else {
+                        acout(options, result, "[ERROR] %s\n", 
+                              playbook.tasks[i].name ? playbook.tasks[i].name : "unnamed");
+                    }
+                    module_result_free(&result);
+                    continue;
+                }
+                
+                // Handle normal tasks with a module
+                if (playbook.tasks[i].type == TASK_TYPE_NORMAL && playbook.tasks[i].module) {
+                
+                    // Only print task name for normal tasks
+                    if (playbook.tasks[i].name) {
+                        cout(options.verbose, "\nTASK [%s] *************\n", playbook.tasks[i].name);
+                    } else {
+                        cout(options.verbose, "\nTASK [unnamed] *************\n");
+                    }
+                }
                 
                 // Extract command directly from the playbook file
                 FILE *file = fopen(options.playbook_path, "r");
@@ -204,13 +243,14 @@ int main(int argc, char *argv[]) {
                         }
                         
                         // Look for the task name
-                        if (!found_task && strstr(line, "name:") && strstr(line, playbook.task_names[i])) {
+                        if (!found_task && strstr(line, "name:") && playbook.tasks[i].name && 
+                            strstr(line, playbook.tasks[i].name)) {
                             found_task = 1;
                             continue;
                         }
                         
                         // If we found the task, look for the module
-                        if (found_task && strstr(line, playbook.task_modules[i])) {
+                        if (found_task && playbook.tasks[i].module && strstr(line, playbook.tasks[i].module)) {
                             char *cmd_start = strchr(line, ':');
                             if (cmd_start) {
                                 cmd_start++; // Move past the colon
@@ -233,19 +273,22 @@ int main(int argc, char *argv[]) {
                 
                 // If we couldn't find the command, use a fallback
                 if (args[0] == '\0') {
-                    if (strcmp(playbook.task_modules[i], "command") == 0) {
+                    if (playbook.tasks[i].module && strcmp(playbook.tasks[i].module, "command") == 0) {
                         snprintf(args, sizeof(args), "echo 'Command not found for task %s'", 
-                                 playbook.task_names[i]);
+                                 playbook.tasks[i].name ? playbook.tasks[i].name : "unnamed");
                     } else {
                         snprintf(args, sizeof(args), "echo 'Unknown module %s'", 
-                                 playbook.task_modules[i]);
+                                 playbook.tasks[i].module ? playbook.tasks[i].module : "unknown");
                     }
                 }
                 
                 // Execute task
                 module_result_t result;
+                module_result_init(&result);
+                
                 if (executor_run_task(context, i, args, &result) == ANCIBLE_SUCCESS) {
-                    acout(options, result, "%s\n", playbook.task_names[i]);
+                    acout(options, result, "%s\n", 
+                          playbook.tasks[i].name ? playbook.tasks[i].name : "unnamed");
                     
                     if (result.msg) {
                         cout(options.verbose, "  Message: %s\n", result.msg);
@@ -260,12 +303,15 @@ int main(int argc, char *argv[]) {
                     }
                     
                     // Save task result to state
-                    state_save_result(host->name, playbook.task_names[i], &result);
+                    state_save_result(host->name, playbook.tasks[i].name ? playbook.tasks[i].name : "unnamed", &result);
                     
                     module_result_free(&result);
                 } else {
-                    acout(options, result, "[ERROR] %s\n", playbook.task_names[i]);
+                    result.failed = 1;
+                    acout(options, result, "%s\n", playbook.tasks[i].name ? playbook.tasks[i].name : "unnamed");
+                    module_result_free(&result);
                 }
+                // Otherwise skip (e.g. block wrappers without modules, rescue, always, subtasks)
             }
         }
         
