@@ -83,24 +83,24 @@ all: prepare $(ANCIBLE_PLAYBOOK) $(TEST_CLI) $(TEST_ARGS) $(TEST_PARSER) $(TEST_
 .PHONY: prepare
 prepare:
 	$(Q)$(cmd_mkdir)
-	$(Q)printf "%s\n" "$(quiet_cmd_mkdir)"
+	$(Q)printf " %s\n" "$(quiet_cmd_mkdir)"
 
 # Build the main executable
 $(ANCIBLE_PLAYBOOK): $(CLI_OBJ) $(CORE_OBJ) $(TRANSPORT_OBJ) $(MODULES_OBJ)
-	$(Q)printf "%s\n" "$(quiet_cmd_link)"
+	$(Q)printf " %s\n" "$(quiet_cmd_link)"
 	$(Q)$(cmd_link)
 
 # Compile source files
 %.o: %.c
-	$(Q)printf "%s\n" "$(quiet_cmd_cc_o_c)"
+	$(Q)printf " %s\n" "$(quiet_cmd_cc_o_c)"
 	$(Q)$(cmd_cc_o_c)
 
 # Clean build artifacts
 .PHONY: clean
 clean:
-	$(Q)printf "%s\n" "CLEAN   objects"
+	$(Q)printf " %s\n" "CLEAN   objects"
 	$(Q)rm -f $(CLI_DIR)/*.o $(CORE_DIR)/*.o $(MODULES_DIR)/*.o $(TRANSPORT_DIR)/*.o
-	$(Q)printf "%s\n" "CLEAN   executables"
+	$(Q)printf " %s\n" "CLEAN   executables"
 	$(Q)rm -f $(ANCIBLE_PLAYBOOK) $(TEST_CLI) $(TEST_ARGS) $(TEST_PARSER) $(TEST_INVENTORY) \
 	          $(TEST_CONTEXT) $(TEST_RUNNER) $(TEST_SSH) $(TEST_COMMAND) \
 	          $(TEST_COMMAND_MODULE) $(TEST_EXECUTOR) $(TEST_STATE) \
@@ -129,53 +129,53 @@ test: $(ANCIBLE_PLAYBOOK) $(TEST_CLI) $(TEST_ARGS) $(TEST_PARSER) $(TEST_INVENTO
 
 # Build test executables
 $(TEST_CLI): $(TEST_DIR)/test_cli.c
-	$(Q)printf "%s\n" "$(quiet_cmd_link)"
+	$(Q)printf " %s\n" "$(quiet_cmd_link)"
 	$(Q)$(cmd_link)
 
 $(TEST_ARGS): $(TEST_DIR)/test_args.c $(CLI_DIR)/args.o
-	$(Q)printf "%s\n" "$(quiet_cmd_link)"
+	$(Q)printf " %s\n" "$(quiet_cmd_link)"
 	$(Q)$(cmd_link)
 
 $(TEST_PARSER): $(TEST_DIR)/test_parser.c $(CORE_DIR)/parser.o
-	$(Q)printf "%s\n" "$(quiet_cmd_link)"
+	$(Q)printf " %s\n" "$(quiet_cmd_link)"
 	$(Q)$(cmd_link)
 
 $(TEST_INVENTORY): $(TEST_DIR)/test_inventory.c $(CORE_DIR)/inventory.o
-	$(Q)printf "%s\n" "$(quiet_cmd_link)"
+	$(Q)printf " %s\n" "$(quiet_cmd_link)"
 	$(Q)$(cmd_link)
 
 $(TEST_CONTEXT): $(TEST_DIR)/test_context.c $(CORE_DIR)/context.o
-	$(Q)printf "%s\n" "$(quiet_cmd_link)"
+	$(Q)printf " %s\n" "$(quiet_cmd_link)"
 	$(Q)$(cmd_link)
 
 $(TEST_RUNNER): $(TEST_DIR)/test_runner.c $(TRANSPORT_DIR)/runner.o $(TRANSPORT_DIR)/ssh.o $(CORE_DIR)/context.o
-	$(Q)printf "%s\n" "$(quiet_cmd_link)"
+	$(Q)printf " %s\n" "$(quiet_cmd_link)"
 	$(Q)$(cmd_link)
 
 $(TEST_SSH): $(TEST_DIR)/test_ssh.c $(TRANSPORT_DIR)/ssh.o $(TRANSPORT_DIR)/runner.o $(CORE_DIR)/context.o
-	$(Q)printf "%s\n" "$(quiet_cmd_link)"
+	$(Q)printf " %s\n" "$(quiet_cmd_link)"
 	$(Q)$(cmd_link)
 
 $(TEST_COMMAND): $(TEST_DIR)/test_command.c $(TRANSPORT_DIR)/runner.o $(TRANSPORT_DIR)/ssh.o $(CORE_DIR)/context.o
-	$(Q)printf "%s\n" "$(quiet_cmd_link)"
+	$(Q)printf " %s\n" "$(quiet_cmd_link)"
 	$(Q)$(cmd_link)
 
 $(TEST_COMMAND_MODULE): $(TEST_DIR)/test_command_module.c $(MODULES_DIR)/command.o $(MODULES_DIR)/module.o $(TRANSPORT_DIR)/runner.o $(TRANSPORT_DIR)/ssh.o $(CORE_DIR)/context.o
-	$(Q)printf "%s\n" "$(quiet_cmd_link)"
+	$(Q)printf " %s\n" "$(quiet_cmd_link)"
 	$(Q)$(cmd_link)
 
 $(TEST_EXECUTOR): $(TEST_DIR)/test_executor.c $(CORE_DIR)/executor.o $(CORE_DIR)/condition.o $(MODULES_DIR)/command.o $(MODULES_DIR)/module.o $(TRANSPORT_DIR)/runner.o $(TRANSPORT_DIR)/ssh.o $(CORE_DIR)/context.o
-	$(Q)printf "%s\n" "$(quiet_cmd_link)"
+	$(Q)printf " %s\n" "$(quiet_cmd_link)"
 	$(Q)$(cmd_link)
 
 $(TEST_STATE): $(TEST_DIR)/test_state.c $(CORE_DIR)/state.o $(MODULES_DIR)/module.o $(TRANSPORT_DIR)/runner.o $(TRANSPORT_DIR)/ssh.o $(CORE_DIR)/context.o
-	$(Q)printf "%s\n" "$(quiet_cmd_link)"
+	$(Q)printf " %s\n" "$(quiet_cmd_link)"
 	$(Q)$(cmd_link)
 
 $(TEST_CONDITION): $(TEST_DIR)/test_condition.c $(CORE_DIR)/condition.o $(CORE_DIR)/context.o
-	$(Q)printf "%s\n" "$(quiet_cmd_link)"
+	$(Q)printf " %s\n" "$(quiet_cmd_link)"
 	$(Q)$(cmd_link)
 
 $(TEST_BLOCKS): $(TEST_DIR)/test_blocks.c $(CORE_DIR)/parser.o $(CORE_DIR)/executor.o $(CORE_DIR)/condition.o $(MODULES_DIR)/module.o $(MODULES_DIR)/command.o $(TRANSPORT_DIR)/runner.o $(TRANSPORT_DIR)/ssh.o $(CORE_DIR)/context.o
-	$(Q)printf "%s\n" "$(quiet_cmd_link)"
+	$(Q)printf " %s\n" "$(quiet_cmd_link)"
 	$(Q)$(cmd_link)
