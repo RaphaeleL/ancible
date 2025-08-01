@@ -1,6 +1,9 @@
 # MacOS
 .DS_Store
 
+# Ancible
+runtime/
+
 # Prerequisites
 *.d
 
