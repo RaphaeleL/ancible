@@ -21,9 +21,36 @@ void print_usage(const char *program_name) {
     printf("Options:\n");
     printf("  --help        Display this help message and exit\n");
     printf("  -v, --verbose Increase verbosity\n");
+    printf("  -c, --color   Enable colored output\n");
     printf("  -i INVENTORY  Specify inventory file (default: ./inventory.ini)\n");
     printf("\n");
     printf("Ancible: High-performance, C-based implementation of Ansible\n");
+}
+
+/**
+ * Print colord messages to stdout if verbose and colored mode is enabled
+ */
+void acout(struct cli_options options, int status, const char *fmt, ...) {
+    if (!options.verbose) {
+        if (options.color) {
+            if (status > 0) {
+                printf("\033[32m");
+            } else if (status == 0) {
+                printf("\033[33m");
+            } else {
+                printf("\033[31m");
+            }
+        }
+
+        va_list args;
+        va_start(args, fmt);
+        vprintf(fmt, args);
+        va_end(args);
+
+        if (options.color) {
+            printf("\033[0m");
+        }
+    }
 }
 
 /**
@@ -42,6 +69,7 @@ void cout(int verbose, const char *fmt, ...) {
  * Main entry point for ancible-playbook
  */
 int main(int argc, char *argv[]) {
+    // Initialize command-line options
     struct cli_options options;
     
     // Parse command-line arguments
@@ -211,7 +239,7 @@ int main(int argc, char *argv[]) {
                 // Execute task
                 module_result_t result;
                 if (executor_run_task(context, i, args, &result) == ANCIBLE_SUCCESS) {
-                    cout(!options.verbose, "%s|%s\n", result.changed ? "changed" : "ok", playbook.task_names[i]);
+                    acout(options, result.changed, "%s|%s\n", result.changed ? "changed" : "ok", playbook.task_names[i]);
                     cout(options.verbose, "%s : %s\n", host->name, result.failed ? "FAILED" : (result.changed ? "CHANGED" : "SUCCESS"));
                     
                     if (result.msg) {

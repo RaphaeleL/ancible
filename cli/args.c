@@ -34,6 +34,8 @@ int parse_args(int argc, char *argv[], struct cli_options *options) {
                 return ANCIBLE_SUCCESS;
             } else if (strcmp(argv[i], "--verbose") == 0 || strcmp(argv[i], "-v") == 0) {
                 options->verbose = 1;
+            } else if (strcmp(argv[i], "--color") == 0 || strcmp(argv[i], "-c") == 0) {
+                options->color = 1;
             } else if (strcmp(argv[i], "-i") == 0) {
                 // Check if there's a value after -i
                 if (i + 1 >= argc) {
