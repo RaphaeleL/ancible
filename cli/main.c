@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <string.h>
 #include <ctype.h>
 #include "../include/ancible.h"
@@ -26,6 +27,18 @@ void print_usage(const char *program_name) {
 }
 
 /**
+ * Print messages to stdout if verbose mode is enabled
+ */
+void cout(int verbose, const char *fmt, ...) {
+    if (verbose) {
+        va_list args;
+        va_start(args, fmt);
+        vprintf(fmt, args);
+        va_end(args);
+    }
+}
+
+/**
  * Main entry point for ancible-playbook
  */
 int main(int argc, char *argv[]) {
@@ -33,7 +46,7 @@ int main(int argc, char *argv[]) {
     
     // Parse command-line arguments
     int result = parse_args(argc, argv, &options);
-    
+      
     // Handle help flag
     if (options.help) {
         print_usage(argv[0]);
@@ -47,11 +60,11 @@ int main(int argc, char *argv[]) {
     }
     
     // Display basic info
-    printf("Ancible playbook runner (MVP)\n");
+    cout(options.verbose, "Ancible playbook runner (MVP)\n");
     if (options.verbose) {
         printf("Verbose mode enabled\n");
     }
-    printf("Playbook: %s\n", options.playbook_path);
+    cout(options.verbose, "Playbook: %s\n", options.playbook_path);
     
     // Parse playbook
     playbook_t playbook;
@@ -79,8 +92,10 @@ int main(int argc, char *argv[]) {
     }
     
     // Print playbook information
-    printf("\nPlaybook details:\n");
-    playbook_print(&playbook);
+    cout(options.verbose, "\nPlaybook details:\n");
+    if (options.verbose) {
+        playbook_print(&playbook);
+    }
     
     // Load inventory
     inventory_t inventory;
@@ -92,8 +107,10 @@ int main(int argc, char *argv[]) {
     }
     
     // Print inventory information
-    printf("\nInventory details:\n");
-    inventory_print(&inventory);
+    cout(options.verbose, "\nInventory details:\n");
+    if (options.verbose) {
+        inventory_print(&inventory);
+    }
     
     // Get hosts for the playbook
     host_t *hosts = inventory_get_hosts(&inventory, playbook.hosts);
@@ -104,14 +121,14 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     
-    printf("\nTargeted hosts:\n");
+    cout(options.verbose, "\nTargeted hosts:\n");
     host_t *host = hosts;
     while (host) {
-        printf("  %s", host->name);
+        cout(options.verbose, "  %s", host->name);
         if (host->ansible_host) {
-            printf(" (ansible_host=%s)", host->ansible_host);
+            cout(options.verbose, " (ansible_host=%s)", host->ansible_host);
         }
-        printf("\n");
+        cout(options.verbose, "\n");
         
         // Create context for this host
         context_t *context = context_create(host, &playbook, options.verbose);
@@ -125,15 +142,17 @@ int main(int argc, char *argv[]) {
         context_set_var(context, "ansible_connection", "local");
         
         // Print context
-        printf("\nContext for host %s:\n", host->name);
-        context_print(context);
+        cout(options.verbose, "\nContext for host %s:\n", host->name);
+        if (options.verbose) {
+            context_print(context);
+        }
         
         // Run tasks for this host
         if (playbook.task_count > 0) {
-            printf("\nRunning tasks for host %s:\n", host->name);
+            cout(options.verbose, "\nRunning tasks for host %s:\n", host->name);
             
             for (int i = 0; i < playbook.task_count; i++) {
-                printf("\nTASK [%s] *************\n", playbook.task_names[i]);
+                cout(options.verbose, "\nTASK [%s] *************\n", playbook.task_names[i]);
                 
                 // Extract command directly from the playbook file
                 FILE *file = fopen(options.playbook_path, "r");
@@ -192,19 +211,19 @@ int main(int argc, char *argv[]) {
                 // Execute task
                 module_result_t result;
                 if (executor_run_task(context, i, args, &result) == ANCIBLE_SUCCESS) {
-                    printf("%s : %s\n", host->name, 
-                           result.failed ? "FAILED" : (result.changed ? "CHANGED" : "SUCCESS"));
+                    cout(!options.verbose, "%s|%s\n", result.changed ? "changed" : "ok", playbook.task_names[i]);
+                    cout(options.verbose, "%s : %s\n", host->name, result.failed ? "FAILED" : (result.changed ? "CHANGED" : "SUCCESS"));
                     
                     if (result.msg) {
-                        printf("  Message: %s\n", result.msg);
+                        cout(options.verbose, "  Message: %s\n", result.msg);
                     }
                     
                     if (result.cmd_result.stdout_data && strlen(result.cmd_result.stdout_data) > 0) {
-                        printf("  Stdout: %s", result.cmd_result.stdout_data);
+                        cout(options.verbose, "  Stdout: %s", result.cmd_result.stdout_data);
                     }
                     
                     if (result.cmd_result.stderr_data && strlen(result.cmd_result.stderr_data) > 0) {
-                        printf("  Stderr: %s", result.cmd_result.stderr_data);
+                        cout(options.verbose, "  Stderr: %s", result.cmd_result.stderr_data);
                     }
                     
                     // Save task result to state
