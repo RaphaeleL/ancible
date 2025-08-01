@@ -44,6 +44,7 @@ The `examples/playbooks/` directory contains several sample playbooks:
 - `6_system_admin.yml` - System administration tasks
 - `7_security_checks.yml` - Security auditing operations
 - `8_database_operations.yml` - Database-related tasks
+- `9_conditions.yml` - When Conditions in Playbooks
 
 Run an example with:
 
@@ -61,6 +62,7 @@ ancible/
 │   └── main.c                # - Main entry point
 ├── core/                     # Core engine components
 │   ├── context.c             # - Execution context management
+│   ├── condition.c           # - Condition engine
 │   ├── executor.c            # - Task execution engine
 │   ├── inventory.c           # - Host inventory parser
 │   ├── parser.c              # - YAML playbook parser
@@ -105,6 +107,7 @@ Ancible has been benchmarked against Ansible for various playbooks. The results 
 | [#6](./examples/playbooks/6_system_admin.yml) -         System Admin Stuff  | 0.062s  | 1.813s  | 
 | [#7](./examples/playbooks/7_security_checks.yml) -      Security Checks     | 0.019s  | 1.157s  | 
 | [#8](./examples/playbooks/8_database_operations.yml) -  Database Operations | 0.064s  | 1.509s  | 
+| [#9](./examples/playbooks/9_conditions.yml) -           Conditions          | 0.076s  | 2.708s  | 
 
 ## Future Development (aka TODO List)
 
@@ -115,8 +118,8 @@ The following features are planned for future implementation, some are necessary
 Those features are necessary to run playbooks, they are not strictly necessary to run the `command` module, but they are needed to fully replace Ansible's functionality.
 
 - [x] Execute Basic Playbooks
+- [x] Conditional Execution: Support for `when` conditionals
 - [ ] Blocks: Support for task grouping and error handling with blocks
-- [ ] Conditional Execution: Support for `when` conditionals
 - [ ] Variable Registration: Support for `register` to capture command output
 
 ### Additional Modules

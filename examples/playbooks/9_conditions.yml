@@ -1,0 +1,22 @@
+---
+# Example playbook demonstrating when conditions
+- hosts: all
+  tasks:
+    - name: Always run this task
+      command: echo "This task always runs"
+
+    - name: Run only when condition is true
+      command: echo "This task runs because condition is true"
+      when: true
+
+    - name: Skip this task because condition is false
+      command: echo "This task should be skipped"
+      when: false
+
+    - name: Run when numeric comparison is true
+      command: echo "Numeric comparison is true"
+      when: 42 > 10
+
+    - name: Skip when numeric comparison is false
+      command: echo "Numeric comparison is false"
+      when: 10 > 42

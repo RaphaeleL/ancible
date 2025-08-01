@@ -35,9 +35,15 @@ int parse_playbook(const char *filename, playbook_t *playbook) {
     // Allocate memory for task arrays
     playbook->task_names = malloc(MAX_TASKS * sizeof(char *));
     playbook->task_modules = malloc(MAX_TASKS * sizeof(char *));
-    if (!playbook->task_names || !playbook->task_modules) {
+    playbook->task_whens = malloc(MAX_TASKS * sizeof(char *));
+    if (!playbook->task_names || !playbook->task_modules || !playbook->task_whens) {
         fprintf(stderr, "Error: Failed to allocate memory for tasks\n");
         return ANCIBLE_ERROR;
+    }
+    
+    // Initialize task_whens to NULL (no condition by default)
+    for (int i = 0; i < MAX_TASKS; i++) {
+        playbook->task_whens[i] = NULL;
     }
     
     // Open file
@@ -119,6 +125,18 @@ int parse_playbook(const char *filename, playbook_t *playbook) {
                     goto cleanup;
                 }
             }
+            // Check for when condition
+            else if (current_task >= 0 && strstr(line, "when:") && !playbook->task_whens[current_task]) {
+                // Extract when condition
+                char *when_start = strchr(line, ':') + 1;
+                while (isspace(*when_start)) when_start++;
+                
+                playbook->task_whens[current_task] = strdup(when_start);
+                if (!playbook->task_whens[current_task]) {
+                    fprintf(stderr, "Error: Failed to allocate memory for task when condition\n");
+                    goto cleanup;
+                }
+            }
         }
     }
     
@@ -182,6 +200,16 @@ void playbook_free(playbook_t *playbook) {
         playbook->task_modules = NULL;
     }
     
+    if (playbook->task_whens) {
+        for (int i = 0; i < playbook->task_count; i++) {
+            if (playbook->task_whens[i]) {
+                free(playbook->task_whens[i]);
+            }
+        }
+        free(playbook->task_whens);
+        playbook->task_whens = NULL;
+    }
+    
     playbook->task_count = 0;
 }
 
@@ -203,5 +231,8 @@ void playbook_print(const playbook_t *playbook) {
         printf("    Task %d:\n", i + 1);
         printf("      Name: %s\n", playbook->task_names[i]);
         printf("      Module: %s\n", playbook->task_modules[i]);
+        if (playbook->task_whens && playbook->task_whens[i]) {
+            printf("      When: %s\n", playbook->task_whens[i]);
+        }
     }
 }

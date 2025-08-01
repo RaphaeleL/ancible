@@ -3,6 +3,7 @@
 #include <string.h>
 #include "../include/ancible.h"
 #include "../include/core/executor.h"
+#include "../include/core/condition.h"
 #include "../include/modules/command.h"
 
 #define MAX_MODULES 32
@@ -87,6 +88,32 @@ int executor_run_task(context_t *context, int task_idx, const char *args, module
     if (task_idx < 0 || task_idx >= context->playbook->task_count) {
         fprintf(stderr, "Error: Invalid task index %d\n", task_idx);
         return ANCIBLE_ERROR;
+    }
+    
+    // Check if this task has a when condition
+    if (context->playbook->task_whens && context->playbook->task_whens[task_idx]) {
+        int condition_result = condition_evaluate(context, context->playbook->task_whens[task_idx]);
+        
+        // If condition is false, skip this task
+        if (condition_result == 0) {
+            if (context->verbose) {
+                printf("Skipping task '%s' due to condition: %s\n", 
+                       context->playbook->task_names[task_idx],
+                       context->playbook->task_whens[task_idx]);
+            }
+            
+            // Set result to indicate skipped task
+            result->changed = 0;
+            result->failed = 0;
+            result->skipped = 1;
+            result->msg = strdup("Skipped due to condition");
+            
+            return ANCIBLE_SUCCESS;
+        } else if (condition_result < 0) {
+            fprintf(stderr, "Error: Failed to evaluate condition: %s\n", 
+                    context->playbook->task_whens[task_idx]);
+            return ANCIBLE_ERROR;
+        }
     }
     
     const char *module_name = context->playbook->task_modules[task_idx];

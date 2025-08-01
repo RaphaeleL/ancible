@@ -17,6 +17,7 @@ int parse_args(int argc, char *argv[], struct cli_options *options) {
     // Initialize options with defaults
     options->help = 0;
     options->verbose = 0;
+    options->color = 0;  // Default to no color
     options->playbook_path = NULL;
     options->inventory_path = "inventory.ini"; // Default inventory path
     
