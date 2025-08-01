@@ -99,18 +99,24 @@ make test
 
 Ancible has been benchmarked against Ansible for various playbooks. The results show significant performance improvements across different types of tasks.
 
-| Playbook                                                                     | Ancible | Ansible | 
-|------------------------------------------------------------------------------|---------|---------| 
-| [#01](./examples/playbooks/1_simple.yml) -               Simple Echo         | 0.113s  | 1.454s  | 
-| [#02](./examples/playbooks/2_multiple_tasks.yml) -       Multiple Tasks      | 0.115s  | 1.897s  | 
-| [#03](./examples/playbooks/3_file_operations.yml) -      File Operations     | 0.141s  | 2.087s  | 
-| [#04](./examples/playbooks/4_cpu_intense.yml) -          CPU Intense Tasks   | 0.363s  | 2.126s  | 
-| [#05](./examples/playbooks/5_network_operations.yml) -   Network Operations  | 2.094s  | 4.186s  | 
-| [#06](./examples/playbooks/6_system_admin.yml) -         System Admin Stuff  | 0.062s  | 1.813s  | 
-| [#07](./examples/playbooks/7_security_checks.yml) -      Security Checks     | 0.019s  | 1.157s  | 
-| [#08](./examples/playbooks/8_database_operations.yml) -  Database Operations | 0.064s  | 1.509s  | 
-| [#09](./examples/playbooks/9_conditions.yml) -           Conditions          | 0.076s  | 2.708s  | 
-| [#10](./examples/playbooks/10_blocks.ymlyml) -           Blocks              | 0.051s  | 2.264s  | 
+| Playbook                                                                     | Ancible | Ansible | Diff <sup>(1)</sup>| % Change  <sup>(2)</sup> | Speedup  <sup>(3)</sup> |
+|------------------------------------------------------------------------------|---------|---------|--------|----------|---------|
+| [#01](./examples/playbooks/1_simple.yml) -               Simple Echo         | 0.113s  | 1.454s  | 1.341s | 1186.73% | 12.87x  |
+| [#02](./examples/playbooks/2_multiple_tasks.yml) -       Multiple Tasks      | 0.115s  | 1.897s  | 1.782s | 1549.57% | 16.50x  |
+| [#03](./examples/playbooks/3_file_operations.yml) -      File Operations     | 0.141s  | 2.087s  | 1.946s | 1380.14% | 14.80x  |
+| [#04](./examples/playbooks/4_cpu_intense.yml) -          CPU Intense Tasks   | 0.363s  | 2.126s  | 1.763s | 0485.96% | 05.86x  |
+| [#05](./examples/playbooks/5_network_operations.yml) -   Network Operations  | 2.094s  | 4.186s  | 2.092s | 0099.86% | 02.00x  |
+| [#06](./examples/playbooks/6_system_admin.yml) -         System Admin Stuff  | 0.062s  | 1.813s  | 1.751s | 2825.81% | 29.24x  |
+| [#07](./examples/playbooks/7_security_checks.yml) -      Security Checks     | 0.019s  | 1.157s  | 1.138s | 5989.47% | 60.89x  |
+| [#08](./examples/playbooks/8_database_operations.yml) -  Database Operations | 0.064s  | 1.509s  | 1.445s | 2257.81% | 23.55x  |
+| [#09](./examples/playbooks/9_conditions.yml) -           Conditions          | 0.076s  | 2.708s  | 2.632s | 3463.16% | 35.63x  |
+| [#10](./examples/playbooks/10_blocks.ymlyml) -           Blocks              | 0.051s  | 2.264s  | 2.213s | 4349.02% | 44.39x  |
+
+> <sup>(1) ansible - ancible </sup>
+
+> <sup>(2) ((ansible - ancible) / ancible) * 100% </sup>
+
+> <sup>(3) ansible / ancible </sup>
 
 ## Future Development (aka TODO List)
 
