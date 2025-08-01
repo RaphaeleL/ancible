@@ -114,7 +114,7 @@ Ancible has been benchmarked against Ansible for various playbooks. The results 
 
 > <sup>(1) ansible - ancible </sup>
 
-> <sup>(2) ((ansible - ancible) / ancible) * 100% </sup>
+> <sup>(2) ((ansible - ancible) / ancible) * 100 </sup>
 
 > <sup>(3) ansible / ancible </sup>
 
