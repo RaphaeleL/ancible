@@ -46,6 +46,7 @@ The `examples/playbooks/` directory contains several sample playbooks:
 - `7_security_checks.yml` - Security auditing operations
 - `8_database_operations.yml` - Database-related tasks
 - `9_conditions.yml` - When Conditions in Playbooks
+- `10_blocks.yml` - Blocks in Playbooks
 
 Run an example with:
 
@@ -98,17 +99,18 @@ make test
 
 Ancible has been benchmarked against Ansible for various playbooks. The results show significant performance improvements across different types of tasks.
 
-| Playbook                                                                    | Ancible | Ansible | 
-|-----------------------------------------------------------------------------|---------|---------| 
-| [#1](./examples/playbooks/1_simple.yml) -               Simple Echo         | 0.113s  | 1.454s  | 
-| [#2](./examples/playbooks/2_multiple_tasks.yml) -       Multiple Tasks      | 0.115s  | 1.897s  | 
-| [#3](./examples/playbooks/3_file_operations.yml) -      File Operations     | 0.141s  | 2.087s  | 
-| [#4](./examples/playbooks/4_cpu_intense.yml) -          CPU Intense Tasks   | 0.363s  | 2.126s  | 
-| [#5](./examples/playbooks/5_network_operations.yml) -   Network Operations  | 2.094s  | 4.186s  | 
-| [#6](./examples/playbooks/6_system_admin.yml) -         System Admin Stuff  | 0.062s  | 1.813s  | 
-| [#7](./examples/playbooks/7_security_checks.yml) -      Security Checks     | 0.019s  | 1.157s  | 
-| [#8](./examples/playbooks/8_database_operations.yml) -  Database Operations | 0.064s  | 1.509s  | 
-| [#9](./examples/playbooks/9_conditions.yml) -           Conditions          | 0.076s  | 2.708s  | 
+| Playbook                                                                     | Ancible | Ansible | 
+|------------------------------------------------------------------------------|---------|---------| 
+| [#01](./examples/playbooks/1_simple.yml) -               Simple Echo         | 0.113s  | 1.454s  | 
+| [#02](./examples/playbooks/2_multiple_tasks.yml) -       Multiple Tasks      | 0.115s  | 1.897s  | 
+| [#03](./examples/playbooks/3_file_operations.yml) -      File Operations     | 0.141s  | 2.087s  | 
+| [#04](./examples/playbooks/4_cpu_intense.yml) -          CPU Intense Tasks   | 0.363s  | 2.126s  | 
+| [#05](./examples/playbooks/5_network_operations.yml) -   Network Operations  | 2.094s  | 4.186s  | 
+| [#06](./examples/playbooks/6_system_admin.yml) -         System Admin Stuff  | 0.062s  | 1.813s  | 
+| [#07](./examples/playbooks/7_security_checks.yml) -      Security Checks     | 0.019s  | 1.157s  | 
+| [#08](./examples/playbooks/8_database_operations.yml) -  Database Operations | 0.064s  | 1.509s  | 
+| [#09](./examples/playbooks/9_conditions.yml) -           Conditions          | 0.076s  | 2.708s  | 
+| [#10](./examples/playbooks/10_blocks.ymlyml) -           Blocks              | 0.051s  | 2.264s  | 
 
 ## Future Development (aka TODO List)
 
@@ -120,7 +122,7 @@ Those features are necessary to run playbooks, they are not strictly necessary t
 
 - [x] Execute Basic Playbooks
 - [x] Conditional Execution: Support for `when` conditionals
-- [ ] Blocks: Support for task grouping and error handling with blocks
+- [x] Blocks: Support for task grouping and error handling with blocks
 - [ ] Variable Registration: Support for `register` to capture command output
 
 ### Additional Modules
