@@ -30,6 +30,7 @@ make
 
 - `--help`: Display help message
 - `-v, --verbose`: Increase verbosity
+- `-c, --color`: Enable Colored output 
 - `-i INVENTORY`: Specify inventory file (default: ./inventory.ini)
 
 ### Example Playbooks
