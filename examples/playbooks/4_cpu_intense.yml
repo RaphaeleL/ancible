@@ -5,7 +5,7 @@
       command: dd if=/dev/urandom of=/tmp/ancible_test/random.dat bs=1M count=10 status=progress
 
     - name: Calculate SHA256 hash of the file
-      shell: shasum -a 256 /tmp/ancible_test/random.dat || sha256sum /tmp/ancible_test/random.dat
+      command: shasum -a 256 /tmp/ancible_test/random.dat || sha256sum /tmp/ancible_test/random.dat
 
     - name: Compress the file with gzip
       command: gzip -f /tmp/ancible_test/random.dat
@@ -17,4 +17,4 @@
       command: gunzip -f /tmp/ancible_test/random.dat.gz
 
     - name: Run a CPU-intensive sort on random data
-      shell: sort -R /etc/passwd > /tmp/ancible_test/sorted_random.txt
+      command: sort -R /etc/passwd > /tmp/ancible_test/sorted_random.txt

@@ -2,19 +2,19 @@
 - hosts: all
   tasks:
     - name: Check if MySQL/MariaDB is installed
-      shell: which mysql || echo "MySQL not installed"
+      command: which mysql || echo "MySQL not installed"
 
     - name: Check if PostgreSQL is installed
-      shell: which psql || echo "PostgreSQL not installed"
+      command: which psql || echo "PostgreSQL not installed"
 
     - name: Check if SQLite is installed
-      shell: which sqlite3 || echo "SQLite not installed"
+      command: which sqlite3 || echo "SQLite not installed"
 
     - name: Create a sample SQLite database
-      shell: echo "CREATE TABLE test (id INTEGER PRIMARY KEY, name TEXT); INSERT INTO test VALUES (1, 'Ancible');" | sqlite3 /tmp/ancible_test/test.db
+      command: echo "CREATE TABLE test (id INTEGER PRIMARY KEY, name TEXT); INSERT INTO test VALUES (1, 'Ancible');" | sqlite3 /tmp/ancible_test/test.db
 
     - name: Query the SQLite database
-      shell: echo "SELECT * FROM test;" | sqlite3 /tmp/ancible_test/test.db
+      command: echo "SELECT * FROM test;" | sqlite3 /tmp/ancible_test/test.db
 
     - name: Check database file size
       command: ls -lh /tmp/ancible_test/test.db

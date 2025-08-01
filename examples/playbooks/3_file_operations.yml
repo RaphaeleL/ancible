@@ -5,7 +5,7 @@
       command: mkdir -p /tmp/ancible_test
 
     - name: Create a test file
-      shell: echo "Hello from Ancible" > /tmp/ancible_test/hello.txt
+      command: echo "Hello from Ancible" > /tmp/ancible_test/hello.txt
 
     - name: Check file content
       command: cat /tmp/ancible_test/hello.txt
@@ -14,10 +14,10 @@
       command: ls -la /tmp/ancible_test
 
     - name: Check file permissions
-      shell: stat -f "%Sp" /tmp/ancible_test/hello.txt || stat -c "%A" /tmp/ancible_test/hello.txt
+      command: stat -f "%Sp" /tmp/ancible_test/hello.txt || stat -c "%A" /tmp/ancible_test/hello.txt
 
     - name: Append to the file
-      shell: echo "This is a second line" >> /tmp/ancible_test/hello.txt
+      command: echo "This is a second line" >> /tmp/ancible_test/hello.txt
 
     - name: Count lines in the file
       command: wc -l /tmp/ancible_test/hello.txt
