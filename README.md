@@ -135,6 +135,7 @@ Those features are necessary to run playbooks, they are not strictly necessary t
 
 While using the `command` module, you can run any command on the remote host, you can copy, use git or create files. Thereby we only need them to fully replace Ansible's functionality, but they are not strictly necessary to run playbooks, since the `command` module can execute any command. However, you can see this as an incentive to implement these modules.
 
+- [x] Command module
 - [ ] File module (create, delete, chmod)
 - [ ] Copy module
 - [ ] Template module
