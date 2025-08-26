@@ -1,6 +1,7 @@
 # Compiler and flags
 CC = clang
-CFLAGS = -Wall -Wextra -Werror -std=c99 -pedantic -O3
+# CFLAGS = -Wall -Wextra -Werror -std=c99 -pedantic -O3
+CFLAGS = -Wall -Wextra -Werror -std=c99 -pedantic -O3 -D_POSIX_C_SOURCE=200809L
 INCLUDES = -I./include
 
 # Directories
@@ -82,8 +83,8 @@ all: prepare $(ANCIBLE_PLAYBOOK) $(TEST_CLI) $(TEST_ARGS) $(TEST_PARSER) $(TEST_
 # Prepare directories
 .PHONY: prepare
 prepare:
-	$(Q)$(cmd_mkdir)
-	$(Q)printf " %s\n" "$(quiet_cmd_mkdir)"
+	@mkdir -p $(BIN_DIR) $(TEST_DIR)
+	@printf " %s\n" "MKDIR   $(BIN_DIR) $(TEST_DIR)"
 
 # Build the main executable
 $(ANCIBLE_PLAYBOOK): $(CLI_OBJ) $(CORE_OBJ) $(TRANSPORT_OBJ) $(MODULES_OBJ)
