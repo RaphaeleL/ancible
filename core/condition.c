@@ -36,6 +36,24 @@ static int is_boolean(const char *str) {
  * @param op Operator (==, !=, >, <, >=, <=)
  * @return 1 if comparison is true, 0 if false, -1 on error
  */
+/**
+ * Ansible-style bare path: hostinfo.rc, myvar.stdout (for register + when)
+ */
+static int looks_like_var_path(const char *s) {
+    if (!s || !*s) {
+        return 0;
+    }
+    if (!isalpha((unsigned char)s[0]) && s[0] != '_') {
+        return 0;
+    }
+    for (const char *p = s; *p; p++) {
+        if (!(isalnum((unsigned char)*p) || *p == '_' || *p == '.')) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
 static int compare_strings(const char *left, const char *right, const char *op) {
     if (!left || !right || !op) {
         return -1;
@@ -139,6 +157,21 @@ int condition_evaluate(context_t *context, const char *condition) {
         return result;
     }
     
+    // Bare variable path truthiness (e.g. register stdout: hostinfo.stdout)
+    if (looks_like_var_path(cond_copy)) {
+        const char *var_value = context_get_var(context, cond_copy);
+        if (var_value) {
+            result = is_boolean(var_value);
+            if (result == -1) {
+                result = *var_value != '\0' ? 1 : 0;
+            }
+        } else {
+            result = 0;
+        }
+        free(cond_copy);
+        return result;
+    }
+    
     // Check for comparisons (==, !=, >, <, >=, <=)
     const char *operators[] = {"==", "!=", ">=", "<=", ">", "<"};
     for (int i = 0; i < 6; i++) {
@@ -162,7 +195,7 @@ int condition_evaluate(context_t *context, const char *condition) {
                 right[--len] = '\0';
             }
             
-            // Check for variable references in operands
+            // Check for variable references in operands ($ / {}) or bare paths (hostinfo.rc)
             if (left[0] == '$' || left[0] == '{') {
                 char *var_name = left;
                 if (var_name[0] == '$') var_name++;
@@ -177,6 +210,11 @@ int condition_evaluate(context_t *context, const char *condition) {
                     left = (char *)var_value;
                 } else {
                     left = "";
+                }
+            } else if (looks_like_var_path(left)) {
+                const char *var_value = context_get_var(context, left);
+                if (var_value) {
+                    left = (char *)var_value;
                 }
             }
             
@@ -194,6 +232,11 @@ int condition_evaluate(context_t *context, const char *condition) {
                     right = (char *)var_value;
                 } else {
                     right = "";
+                }
+            } else if (looks_like_var_path(right)) {
+                const char *var_value = context_get_var(context, right);
+                if (var_value) {
+                    right = (char *)var_value;
                 }
             }
             

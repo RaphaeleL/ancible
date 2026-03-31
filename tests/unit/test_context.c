@@ -43,7 +43,8 @@ static playbook_t *create_test_playbook(void) {
     playbook->task_count = 1;
     
     playbook->tasks = malloc(sizeof(task_t));
-    
+    memset(&playbook->tasks[0], 0, sizeof(task_t));
+    playbook->tasks[0].parent_idx = -1;
     playbook->tasks[0].name = strdup("Test task");
     playbook->tasks[0].module = strdup("command");
     
@@ -61,6 +62,9 @@ static void free_test_playbook(playbook_t *playbook) {
     for (int i = 0; i < playbook->task_count; i++) {
         free(playbook->tasks[i].name);
         free(playbook->tasks[i].module);
+        free(playbook->tasks[i].when);
+        free(playbook->tasks[i].register_var);
+        free(playbook->tasks[i].subtask_indices);
     }
     
     free(playbook->tasks);
@@ -134,6 +138,31 @@ int main(void) {
         free_test_host(host);
         free_test_playbook(playbook);
         
+        printf("OK\n");
+    }
+    
+    // Test 3: Register (captured command result fields)
+    {
+        printf("Test 3: context_apply_register... ");
+        host_t *host = create_test_host();
+        playbook_t *playbook = create_test_playbook();
+        context_t *context = context_create(host, playbook, 0);
+        assert(context != NULL);
+        
+        assert(context_apply_register(context, "out", "hello\n", "warn", 0, 0, "ok") == ANCIBLE_SUCCESS);
+        assert(strcmp(context_get_var(context, "out.stdout"), "hello\n") == 0);
+        assert(strcmp(context_get_var(context, "out.stderr"), "warn") == 0);
+        assert(strcmp(context_get_var(context, "out.rc"), "0") == 0);
+        assert(strcmp(context_get_var(context, "out.failed"), "false") == 0);
+        assert(strcmp(context_get_var(context, "out.msg"), "ok") == 0);
+        
+        assert(context_apply_register(context, "out", "", "", 1, 1, "bad") == ANCIBLE_SUCCESS);
+        assert(strcmp(context_get_var(context, "out.rc"), "1") == 0);
+        assert(strcmp(context_get_var(context, "out.failed"), "true") == 0);
+        
+        context_free(context);
+        free_test_host(host);
+        free_test_playbook(playbook);
         printf("OK\n");
     }
     

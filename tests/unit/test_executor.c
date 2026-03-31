@@ -43,7 +43,8 @@ static playbook_t *create_test_playbook(void) {
     playbook->task_count = 1;
     
     playbook->tasks = malloc(sizeof(task_t));
-    
+    memset(&playbook->tasks[0], 0, sizeof(task_t));
+    playbook->tasks[0].parent_idx = -1;
     playbook->tasks[0].name = strdup("Test command");
     playbook->tasks[0].module = strdup("command");
     
@@ -61,6 +62,9 @@ static void free_test_playbook(playbook_t *playbook) {
     for (int i = 0; i < playbook->task_count; i++) {
         free(playbook->tasks[i].name);
         free(playbook->tasks[i].module);
+        free(playbook->tasks[i].when);
+        free(playbook->tasks[i].register_var);
+        free(playbook->tasks[i].subtask_indices);
     }
     
     free(playbook->tasks);
@@ -144,7 +148,36 @@ int main(void) {
     
     // Test 4: Clean up
     {
-        printf("Test 4: Cleaning up executor... ");
+        printf("Test 4: Rendering context variable in args... ");
+        
+        host_t *host = create_test_host();
+        playbook_t *playbook = create_test_playbook();
+        context_t *context = context_create(host, playbook, 0);
+        assert(context != NULL);
+        
+        context_set_var(context, "ansible_connection", "local");
+        context_set_var(context, "captured.stdout", "templated-value");
+        
+        module_result_t result;
+        module_result_init(&result);
+        int ret = executor_run_task(context, 0, "echo \"{{ captured.stdout }}\"", &result);
+        
+        assert(ret == ANCIBLE_SUCCESS);
+        assert(result.failed == 0);
+        assert(result.cmd_result.stdout_data != NULL);
+        assert(strstr(result.cmd_result.stdout_data, "templated-value") != NULL);
+        
+        module_result_free(&result);
+        context_free(context);
+        free_test_host(host);
+        free_test_playbook(playbook);
+        
+        printf("OK\n");
+    }
+    
+    // Test 5: Clean up
+    {
+        printf("Test 5: Cleaning up executor... ");
         
         executor_cleanup();
         

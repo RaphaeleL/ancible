@@ -60,6 +60,16 @@ int context_set_var(context_t *context, const char *name, const char *value);
 const char *context_get_var(context_t *context, const char *name);
 
 /**
+ * Store task result for Ansible-style register: sets basename.stdout, .stderr,
+ * .rc, .failed, and .msg in the context (skipped tasks should not call this).
+ *
+ * @return ANCIBLE_SUCCESS on success, ANCIBLE_ERROR on error
+ */
+int context_apply_register(context_t *context, const char *basename,
+    const char *stdout_data, const char *stderr_data, int exit_code,
+    int failed, const char *msg);
+
+/**
  * Print context (for debugging)
  * 
  * @param context Pointer to context to print

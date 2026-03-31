@@ -51,6 +51,7 @@ int parse_playbook(const char *filename, playbook_t *playbook) {
         playbook->tasks[i].name = NULL;
         playbook->tasks[i].module = NULL;
         playbook->tasks[i].when = NULL;
+        playbook->tasks[i].register_var = NULL;
         playbook->tasks[i].type = TASK_TYPE_NORMAL;
         playbook->tasks[i].parent_idx = -1;
         playbook->tasks[i].subtask_count = 0;
@@ -290,6 +291,9 @@ int parse_playbook(const char *filename, playbook_t *playbook) {
                 if (strstr(line, "block:") || strstr(line, "rescue:") || strstr(line, "always:")) {
                     continue;
                 }
+                if (strstr(line, "when:") || strstr(line, "register:")) {
+                    continue;
+                }
                 
                 char *module_end = strchr(line, ':');
                 *module_end = '\0';
@@ -301,6 +305,17 @@ int parse_playbook(const char *filename, playbook_t *playbook) {
                 playbook->tasks[current_task].module = strdup(module_start);
                 if (!playbook->tasks[current_task].module) {
                     fprintf(stderr, "Error: Failed to allocate memory for task module\n");
+                    goto cleanup;
+                }
+            }
+            // Check for register variable
+            else if (current_task >= 0 && strstr(line, "register:") && !playbook->tasks[current_task].register_var) {
+                char *reg_start = strchr(line, ':') + 1;
+                while (isspace(*reg_start)) reg_start++;
+                
+                playbook->tasks[current_task].register_var = strdup(reg_start);
+                if (!playbook->tasks[current_task].register_var) {
+                    fprintf(stderr, "Error: Failed to allocate memory for task register variable\n");
                     goto cleanup;
                 }
             }
@@ -373,6 +388,10 @@ void playbook_free(playbook_t *playbook) {
                 free(playbook->tasks[i].when);
             }
             
+            if (playbook->tasks[i].register_var) {
+                free(playbook->tasks[i].register_var);
+            }
+            
             if (playbook->tasks[i].subtask_indices) {
                 free(playbook->tasks[i].subtask_indices);
             }
@@ -427,6 +446,10 @@ void playbook_print(const playbook_t *playbook) {
         // Print when condition if available
         if (playbook->tasks[i].when) {
             printf("      When: %s\n", playbook->tasks[i].when);
+        }
+        
+        if (playbook->tasks[i].register_var) {
+            printf("      Register: %s\n", playbook->tasks[i].register_var);
         }
         
         // Print parent index if not top-level

@@ -30,6 +30,19 @@ int main(void) {
         printf("OK\n");
     }
     
+    // Test register field
+    {
+        printf("Test 1b: Parsing register playbook... ");
+        playbook_t playbook;
+        int result = parse_playbook("../../examples/playbooks/11_register.yml", &playbook);
+        assert(result == ANCIBLE_SUCCESS);
+        assert(playbook.task_count >= 1);
+        assert(playbook.tasks[0].register_var != NULL);
+        assert(strcmp(playbook.tasks[0].register_var, "msgcap") == 0);
+        playbook_free(&playbook);
+        printf("OK\n");
+    }
+    
     // Test 2: Parse nonexistent playbook
     {
         printf("Test 2: Parsing nonexistent playbook... ");

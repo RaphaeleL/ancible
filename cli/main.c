@@ -74,6 +74,36 @@ void cout(int verbose, const char *fmt, ...) {
     }
 }
 
+static void normalize_task_args(char *args) {
+    if (!args) {
+        return;
+    }
+
+    // Trim leading whitespace.
+    char *start = args;
+    while (*start && isspace((unsigned char)*start)) {
+        start++;
+    }
+    if (start != args) {
+        memmove(args, start, strlen(start) + 1);
+    }
+
+    size_t len = strlen(args);
+    while (len > 0 && isspace((unsigned char)args[len - 1])) {
+        args[--len] = '\0';
+    }
+
+    // Strip matching outer quotes to align with YAML scalar parsing.
+    if (len >= 2) {
+        char first = args[0];
+        char last = args[len - 1];
+        if ((first == '\'' && last == '\'') || (first == '"' && last == '"')) {
+            memmove(args, args + 1, len - 2);
+            args[len - 2] = '\0';
+        }
+    }
+}
+
 /**
  * Main entry point for ancible-playbook
  */
@@ -263,6 +293,7 @@ int main(int argc, char *argv[]) {
                                 // Copy the command
                                 strncpy(args, cmd_start, sizeof(args) - 1);
                                 args[sizeof(args) - 1] = '\0';
+                                normalize_task_args(args);
                                 break;
                             }
                         }

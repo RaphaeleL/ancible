@@ -12,6 +12,110 @@
 static module_registry_entry_t registry[MAX_MODULES];
 static int registry_count = 0;
 
+static int append_to_buffer(char **buffer, size_t *length, size_t *capacity,
+    const char *text, size_t text_len) {
+    if (!buffer || !length || !capacity || (!text && text_len > 0)) {
+        return ANCIBLE_ERROR;
+    }
+
+    size_t needed = *length + text_len + 1;
+    if (needed > *capacity) {
+        size_t new_capacity = *capacity ? *capacity : 64;
+        while (new_capacity < needed) {
+            new_capacity *= 2;
+        }
+
+        char *new_buffer = realloc(*buffer, new_capacity);
+        if (!new_buffer) {
+            return ANCIBLE_ERROR;
+        }
+
+        *buffer = new_buffer;
+        *capacity = new_capacity;
+    }
+
+    if (text_len > 0) {
+        memcpy(*buffer + *length, text, text_len);
+        *length += text_len;
+    }
+
+    (*buffer)[*length] = '\0';
+    return ANCIBLE_SUCCESS;
+}
+
+static char *render_args_template(context_t *context, const char *args) {
+    if (!context || !args) {
+        return NULL;
+    }
+
+    char *out = NULL;
+    size_t out_len = 0;
+    size_t out_cap = 0;
+
+    const char *cursor = args;
+    while (*cursor) {
+        const char *open = strstr(cursor, "{{");
+        if (!open) {
+            if (append_to_buffer(&out, &out_len, &out_cap, cursor, strlen(cursor)) != ANCIBLE_SUCCESS) {
+                free(out);
+                return NULL;
+            }
+            break;
+        }
+
+        if (append_to_buffer(&out, &out_len, &out_cap, cursor, (size_t)(open - cursor)) != ANCIBLE_SUCCESS) {
+            free(out);
+            return NULL;
+        }
+
+        const char *close = strstr(open + 2, "}}");
+        if (!close) {
+            if (append_to_buffer(&out, &out_len, &out_cap, open, strlen(open)) != ANCIBLE_SUCCESS) {
+                free(out);
+                return NULL;
+            }
+            break;
+        }
+
+        const char *name_start = open + 2;
+        while (name_start < close && (*name_start == ' ' || *name_start == '\t')) {
+            name_start++;
+        }
+
+        const char *name_end = close;
+        while (name_end > name_start && (*(name_end - 1) == ' ' || *(name_end - 1) == '\t')) {
+            name_end--;
+        }
+
+        size_t name_len = (size_t)(name_end - name_start);
+        if (name_len > 0) {
+            char *name = malloc(name_len + 1);
+            if (!name) {
+                free(out);
+                return NULL;
+            }
+            memcpy(name, name_start, name_len);
+            name[name_len] = '\0';
+
+            const char *value = context_get_var(context, name);
+            free(name);
+
+            if (value && append_to_buffer(&out, &out_len, &out_cap, value, strlen(value)) != ANCIBLE_SUCCESS) {
+                free(out);
+                return NULL;
+            }
+        }
+
+        cursor = close + 2;
+    }
+
+    if (!out) {
+        out = strdup("");
+    }
+
+    return out;
+}
+
 /**
  * Initialize the module registry
  * 
@@ -148,8 +252,29 @@ int executor_run_task(context_t *context, int task_idx, const char *args, module
         return ANCIBLE_ERROR;
     }
     
+    const char *module_args = args;
+    char *rendered_args = NULL;
+    if (args) {
+        rendered_args = render_args_template(context, args);
+        if (!rendered_args) {
+            fprintf(stderr, "Error: Failed to render task arguments\n");
+            return ANCIBLE_ERROR;
+        }
+        module_args = rendered_args;
+    }
+
     // Execute module
-    return module_func(context, args, result);
+    int mod_rc = module_func(context, module_args, result);
+    free(rendered_args);
+    if (mod_rc == ANCIBLE_SUCCESS && task->register_var && result && !result->skipped) {
+        context_apply_register(context, task->register_var,
+            result->cmd_result.stdout_data,
+            result->cmd_result.stderr_data,
+            result->cmd_result.exit_code,
+            result->failed,
+            result->msg);
+    }
+    return mod_rc;
 }
 
 /**

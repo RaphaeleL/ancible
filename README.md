@@ -47,6 +47,7 @@ The `examples/playbooks/` directory contains several sample playbooks:
 - `8_database_operations.yml` - Database-related tasks
 - `9_conditions.yml` - When Conditions in Playbooks
 - `10_blocks.yml` - Blocks in Playbooks
+- `11_register.yml` - Register: capture stdout/rc and use in `when`
 
 Run an example with:
 
@@ -111,6 +112,7 @@ Ancible has been benchmarked against Ansible for various playbooks. The results 
 | [#08](./examples/playbooks/8_database_operations.yml) -  Database Operations | 0.064s  | 1.509s  | 1.445s | 2257.81% | 23.55x  |
 | [#09](./examples/playbooks/9_conditions.yml) -           Conditions          | 0.076s  | 2.708s  | 2.632s | 3463.16% | 35.63x  |
 | [#10](./examples/playbooks/10_blocks.yml) -              Blocks              | 0.051s  | 2.264s  | 2.213s | 4349.02% | 44.39x  |
+| [#11](./examples/playbooks/11_register.yml) -            Register Variables  | 0.014s  | 1.899s  | 1.885s | 13426.13%| 135.26x |
 
 > <sup>(1) ansible - ancible </sup>
 
@@ -129,7 +131,7 @@ Those features are necessary to run playbooks, they are not strictly necessary t
 - [x] Execute Basic Playbooks
 - [x] Conditional Execution: Support for `when` conditionals
 - [x] Blocks: Support for task grouping and error handling with blocks
-- [ ] Variable Registration: Support for `register` to capture command output
+- [x] Variable Registration: Support for `register` to capture command output
 
 ### Additional Modules
 

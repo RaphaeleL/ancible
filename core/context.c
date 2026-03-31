@@ -177,6 +177,55 @@ const char *context_get_var(context_t *context, const char *name) {
     return NULL;
 }
 
+int context_apply_register(context_t *context, const char *basename,
+    const char *stdout_data, const char *stderr_data, int exit_code,
+    int failed, const char *msg) {
+    if (!context || !basename || !*basename) {
+        return ANCIBLE_ERROR;
+    }
+
+    char key[256];
+    char rcbuf[32];
+
+    if (snprintf(key, sizeof(key), "%s.stdout", basename) >= (int)sizeof(key)) {
+        return ANCIBLE_ERROR;
+    }
+    if (context_set_var(context, key, stdout_data ? stdout_data : "") != ANCIBLE_SUCCESS) {
+        return ANCIBLE_ERROR;
+    }
+
+    if (snprintf(key, sizeof(key), "%s.stderr", basename) >= (int)sizeof(key)) {
+        return ANCIBLE_ERROR;
+    }
+    if (context_set_var(context, key, stderr_data ? stderr_data : "") != ANCIBLE_SUCCESS) {
+        return ANCIBLE_ERROR;
+    }
+
+    if (snprintf(key, sizeof(key), "%s.rc", basename) >= (int)sizeof(key)) {
+        return ANCIBLE_ERROR;
+    }
+    snprintf(rcbuf, sizeof(rcbuf), "%d", exit_code);
+    if (context_set_var(context, key, rcbuf) != ANCIBLE_SUCCESS) {
+        return ANCIBLE_ERROR;
+    }
+
+    if (snprintf(key, sizeof(key), "%s.failed", basename) >= (int)sizeof(key)) {
+        return ANCIBLE_ERROR;
+    }
+    if (context_set_var(context, key, failed ? "true" : "false") != ANCIBLE_SUCCESS) {
+        return ANCIBLE_ERROR;
+    }
+
+    if (snprintf(key, sizeof(key), "%s.msg", basename) >= (int)sizeof(key)) {
+        return ANCIBLE_ERROR;
+    }
+    if (context_set_var(context, key, msg ? msg : "") != ANCIBLE_SUCCESS) {
+        return ANCIBLE_ERROR;
+    }
+
+    return ANCIBLE_SUCCESS;
+}
+
 /**
  * Print context (for debugging)
  * 

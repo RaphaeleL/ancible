@@ -18,6 +18,7 @@ typedef struct task {
     char *name;           // Task name
     char *module;         // Task module name
     char *when;           // Task when condition (may be NULL if no condition)
+    char *register_var;   // Variable name for register (Ansible-style capture), or NULL
     task_type_t type;     // Task type
     int parent_idx;       // Index of parent block (-1 if top-level)
     int subtask_count;    // Number of subtasks (for blocks)

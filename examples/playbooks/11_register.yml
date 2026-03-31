@@ -1,0 +1,13 @@
+---
+- hosts: all
+  tasks:
+    - name: Write a variable via register
+      command: printf 'ancible-rocks'
+      register: msgcap
+
+    - name: Echo the registered variable
+      command: 'echo "registered value: {{ msgcap.stdout }}"'
+
+    - name: Condition based on the registered variable
+      command: 'echo "condition matched for {{ msgcap.stdout }}"'
+      when: msgcap.stdout == "ancible-rocks"
