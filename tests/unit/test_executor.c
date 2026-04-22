@@ -160,12 +160,12 @@ int main(void) {
         
         module_result_t result;
         module_result_init(&result);
-        int ret = executor_run_task(context, 0, "echo \"{{ captured.stdout }}\"", &result);
+        int ret = executor_run_task(context, 0, "echo \"{{ captured.stdout | upper }}\"", &result);
         
         assert(ret == ANCIBLE_SUCCESS);
         assert(result.failed == 0);
         assert(result.cmd_result.stdout_data != NULL);
-        assert(strstr(result.cmd_result.stdout_data, "templated-value") != NULL);
+        assert(strstr(result.cmd_result.stdout_data, "TEMPLATED-VALUE") != NULL);
         
         module_result_free(&result);
         context_free(context);

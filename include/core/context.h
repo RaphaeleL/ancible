@@ -60,6 +60,36 @@ int context_set_var(context_t *context, const char *name, const char *value);
 const char *context_get_var(context_t *context, const char *name);
 
 /**
+ * Render Jinja2-like templates in a string using context variables.
+ *
+ * Supported form: {{ var }} and simple filters like:
+ * - {{ var | trim }}
+ * - {{ var | lower }}
+ * - {{ var | upper }}
+ * - {{ var | length }}
+ * - {{ var | default("fallback") }}
+ *
+ * @param context Pointer to the context
+ * @param input Input string that may contain templates
+ * @return Newly allocated rendered string (caller frees), or NULL on error
+ */
+char *context_render_template(context_t *context, const char *input);
+
+/**
+ * Evaluate a simple Jinja2-like variable expression with optional filters.
+ *
+ * Example inputs:
+ * - varname
+ * - varname | trim | lower
+ * - missing | default("fallback")
+ *
+ * @param context Pointer to the context
+ * @param expression Variable expression
+ * @return Newly allocated evaluated value (caller frees), or NULL on error
+ */
+char *context_eval_expression(context_t *context, const char *expression);
+
+/**
  * Store task result for Ansible-style register: sets basename.stdout, .stderr,
  * .rc, .failed, and .msg in the context (skipped tasks should not call this).
  *

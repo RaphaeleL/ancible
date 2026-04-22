@@ -97,8 +97,14 @@ int condition_evaluate(context_t *context, const char *condition) {
     if (!context || !condition) {
         return -1;
     }
+
+    char *rendered_condition = context_render_template(context, condition);
+    if (!rendered_condition) {
+        return -1;
+    }
     
     // Trim leading/trailing whitespace
+    condition = rendered_condition;
     while (isspace(*condition)) condition++;
     
     // Make a copy of the condition that we can modify
@@ -113,8 +119,18 @@ int condition_evaluate(context_t *context, const char *condition) {
         cond_copy[--len] = '\0';
     }
     
-    // Remove surrounding quotes if the entire condition is quoted
-    if (len >= 2 && cond_copy[0] == '"' && cond_copy[len-1] == '"') {
+    // Parser stores YAML single-quoted when values with quotes included.
+    if (len >= 2 && cond_copy[0] == '\'' && cond_copy[len - 1] == '\'') {
+        cond_copy[len - 1] = '\0';
+        memmove(cond_copy, cond_copy + 1, len);
+        len -= 2;
+    }
+
+    // Remove surrounding double-quotes only for single quoted literals, not comparisons.
+    if (len >= 2 && cond_copy[0] == '"' && cond_copy[len-1] == '"' &&
+        !strstr(cond_copy, "==") && !strstr(cond_copy, "!=") &&
+        !strstr(cond_copy, ">=") && !strstr(cond_copy, "<=") &&
+        !strstr(cond_copy, ">") && !strstr(cond_copy, "<")) {
         cond_copy[len-1] = '\0';
         memmove(cond_copy, cond_copy + 1, len);
         len -= 2;
@@ -126,6 +142,7 @@ int condition_evaluate(context_t *context, const char *condition) {
     result = is_boolean(cond_copy);
     if (result != -1) {
         free(cond_copy);
+        free(rendered_condition);
         return result;
     }
     
@@ -154,9 +171,28 @@ int condition_evaluate(context_t *context, const char *condition) {
         }
         
         free(cond_copy);
+        free(rendered_condition);
         return result;
     }
     
+    // Inline filtered expression truthiness (e.g. out.stdout | trim | lower)
+    if (strchr(cond_copy, '|') != NULL) {
+        char *evaluated = context_eval_expression(context, cond_copy);
+        if (!evaluated) {
+            free(cond_copy);
+            free(rendered_condition);
+            return -1;
+        }
+        result = is_boolean(evaluated);
+        if (result == -1) {
+            result = *evaluated != '\0' ? 1 : 0;
+        }
+        free(evaluated);
+        free(cond_copy);
+        free(rendered_condition);
+        return result;
+    }
+
     // Bare variable path truthiness (e.g. register stdout: hostinfo.stdout)
     if (looks_like_var_path(cond_copy)) {
         const char *var_value = context_get_var(context, cond_copy);
@@ -169,6 +205,7 @@ int condition_evaluate(context_t *context, const char *condition) {
             result = 0;
         }
         free(cond_copy);
+        free(rendered_condition);
         return result;
     }
     
@@ -194,6 +231,9 @@ int condition_evaluate(context_t *context, const char *condition) {
             while (len > 0 && isspace(right[len - 1])) {
                 right[--len] = '\0';
             }
+
+            char *left_eval = NULL;
+            char *right_eval = NULL;
             
             // Check for variable references in operands ($ / {}) or bare paths (hostinfo.rc)
             if (left[0] == '$' || left[0] == '{') {
@@ -216,6 +256,14 @@ int condition_evaluate(context_t *context, const char *condition) {
                 if (var_value) {
                     left = (char *)var_value;
                 }
+            } else if (strchr(left, '|') != NULL) {
+                left_eval = context_eval_expression(context, left);
+                if (!left_eval) {
+                    free(cond_copy);
+                    free(rendered_condition);
+                    return -1;
+                }
+                left = left_eval;
             }
             
             if (right[0] == '$' || right[0] == '{') {
@@ -238,6 +286,15 @@ int condition_evaluate(context_t *context, const char *condition) {
                 if (var_value) {
                     right = (char *)var_value;
                 }
+            } else if (strchr(right, '|') != NULL) {
+                right_eval = context_eval_expression(context, right);
+                if (!right_eval) {
+                    free(left_eval);
+                    free(cond_copy);
+                    free(rendered_condition);
+                    return -1;
+                }
+                right = right_eval;
             }
             
             // Remove surrounding quotes if present
@@ -255,10 +312,13 @@ int condition_evaluate(context_t *context, const char *condition) {
             
             // Compare operands
             result = compare_strings(left, right, operators[i]);
+            free(left_eval);
+            free(right_eval);
             break;
         }
     }
     
     free(cond_copy);
+    free(rendered_condition);
     return result;
 }

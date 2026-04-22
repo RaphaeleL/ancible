@@ -12,108 +12,24 @@
 static module_registry_entry_t registry[MAX_MODULES];
 static int registry_count = 0;
 
-static int append_to_buffer(char **buffer, size_t *length, size_t *capacity,
-    const char *text, size_t text_len) {
-    if (!buffer || !length || !capacity || (!text && text_len > 0)) {
-        return ANCIBLE_ERROR;
+static const char *render_task_label(context_t *context, const char *name, char **owned_rendered) {
+    if (owned_rendered) {
+        *owned_rendered = NULL;
     }
-
-    size_t needed = *length + text_len + 1;
-    if (needed > *capacity) {
-        size_t new_capacity = *capacity ? *capacity : 64;
-        while (new_capacity < needed) {
-            new_capacity *= 2;
-        }
-
-        char *new_buffer = realloc(*buffer, new_capacity);
-        if (!new_buffer) {
-            return ANCIBLE_ERROR;
-        }
-
-        *buffer = new_buffer;
-        *capacity = new_capacity;
+    if (!name) {
+        return "unnamed";
     }
-
-    if (text_len > 0) {
-        memcpy(*buffer + *length, text, text_len);
-        *length += text_len;
+    if (!context || !strstr(name, "{{")) {
+        return name;
     }
-
-    (*buffer)[*length] = '\0';
-    return ANCIBLE_SUCCESS;
-}
-
-static char *render_args_template(context_t *context, const char *args) {
-    if (!context || !args) {
-        return NULL;
+    char *rendered = context_render_template(context, name);
+    if (!rendered) {
+        return name;
     }
-
-    char *out = NULL;
-    size_t out_len = 0;
-    size_t out_cap = 0;
-
-    const char *cursor = args;
-    while (*cursor) {
-        const char *open = strstr(cursor, "{{");
-        if (!open) {
-            if (append_to_buffer(&out, &out_len, &out_cap, cursor, strlen(cursor)) != ANCIBLE_SUCCESS) {
-                free(out);
-                return NULL;
-            }
-            break;
-        }
-
-        if (append_to_buffer(&out, &out_len, &out_cap, cursor, (size_t)(open - cursor)) != ANCIBLE_SUCCESS) {
-            free(out);
-            return NULL;
-        }
-
-        const char *close = strstr(open + 2, "}}");
-        if (!close) {
-            if (append_to_buffer(&out, &out_len, &out_cap, open, strlen(open)) != ANCIBLE_SUCCESS) {
-                free(out);
-                return NULL;
-            }
-            break;
-        }
-
-        const char *name_start = open + 2;
-        while (name_start < close && (*name_start == ' ' || *name_start == '\t')) {
-            name_start++;
-        }
-
-        const char *name_end = close;
-        while (name_end > name_start && (*(name_end - 1) == ' ' || *(name_end - 1) == '\t')) {
-            name_end--;
-        }
-
-        size_t name_len = (size_t)(name_end - name_start);
-        if (name_len > 0) {
-            char *name = malloc(name_len + 1);
-            if (!name) {
-                free(out);
-                return NULL;
-            }
-            memcpy(name, name_start, name_len);
-            name[name_len] = '\0';
-
-            const char *value = context_get_var(context, name);
-            free(name);
-
-            if (value && append_to_buffer(&out, &out_len, &out_cap, value, strlen(value)) != ANCIBLE_SUCCESS) {
-                free(out);
-                return NULL;
-            }
-        }
-
-        cursor = close + 2;
+    if (owned_rendered) {
+        *owned_rendered = rendered;
     }
-
-    if (!out) {
-        out = strdup("");
-    }
-
-    return out;
+    return rendered;
 }
 
 /**
@@ -213,11 +129,14 @@ int executor_run_task(context_t *context, int task_idx, const char *args, module
         
         // If condition is false, skip this task
         if (condition_result == 0) {
+            char *rendered_name = NULL;
+            const char *task_name = render_task_label(context, task->name, &rendered_name);
             if (context->verbose) {
                 printf("Skipping task '%s' due to condition: %s\n", 
-                       task->name ? task->name : "unnamed",
+                       task_name,
                        task->when);
             }
+            free(rendered_name);
             
             // Set result to indicate skipped task
             result->changed = 0;
@@ -255,7 +174,7 @@ int executor_run_task(context_t *context, int task_idx, const char *args, module
     const char *module_args = args;
     char *rendered_args = NULL;
     if (args) {
-        rendered_args = render_args_template(context, args);
+        rendered_args = context_render_template(context, args);
         if (!rendered_args) {
             fprintf(stderr, "Error: Failed to render task arguments\n");
             return ANCIBLE_ERROR;
@@ -312,11 +231,14 @@ int executor_run_block(context_t *context, int block_idx, const char *args, modu
         
         // If condition is false, skip this block
         if (condition_result == 0) {
+            char *rendered_name = NULL;
+            const char *block_name = render_task_label(context, block->name, &rendered_name);
             if (context->verbose) {
                 printf("Skipping block '%s' due to condition: %s\n", 
-                       block->name ? block->name : "unnamed",
+                       block_name,
                        block->when);
             }
+            free(rendered_name);
             
             // Set result to indicate skipped block
             result->changed = 0;
@@ -409,8 +331,11 @@ int executor_run_block(context_t *context, int block_idx, const char *args, modu
         task_t *rescue = &context->playbook->tasks[rescue_idx];
         
         if (context->verbose) {
+            char *rendered_name = NULL;
+            const char *block_name = render_task_label(context, block->name, &rendered_name);
             printf("Executing rescue block for '%s'\n", 
-                   block->name ? block->name : "unnamed");
+                   block_name);
+            free(rendered_name);
         }
         
         // Execute tasks in the rescue block
@@ -462,8 +387,11 @@ int executor_run_block(context_t *context, int block_idx, const char *args, modu
         task_t *always = &context->playbook->tasks[always_idx];
         
         if (context->verbose) {
+            char *rendered_name = NULL;
+            const char *block_name = render_task_label(context, block->name, &rendered_name);
             printf("Executing always block for '%s'\n", 
-                   block->name ? block->name : "unnamed");
+                   block_name);
+            free(rendered_name);
         }
         
         // Execute tasks in the always block

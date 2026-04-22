@@ -1,0 +1,17 @@
+---
+- hosts: all
+  tasks:
+    - name: Capture a value
+      command: printf 'Ancible Rocks'
+      register: captured
+
+    - name: Use templating with filters in command
+      command: 'echo "value={{ captured.stdout | upper | trim }}"'
+
+    - name: Name templating for {{ captured.stdout | upper | trim }}
+      command: 'echo "task name was templated"'
+
+    - name: Run condition using templated expression
+      command: 'echo "templated condition matched"'
+      when: captured.stdout | lower | trim == "ancible rocks"
+

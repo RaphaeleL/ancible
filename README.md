@@ -48,6 +48,7 @@ The `examples/playbooks/` directory contains several sample playbooks:
 - `9_conditions.yml` - When Conditions in Playbooks
 - `10_blocks.yml` - Blocks in Playbooks
 - `11_register.yml` - Register: capture stdout/rc and use in `when`
+- `12_templating.yml` - Jinja2-like variable templating in args and `when`
 
 Run an example with:
 
@@ -113,6 +114,7 @@ Ancible has been benchmarked against Ansible for various playbooks. The results 
 | [#09](./examples/playbooks/9_conditions.yml) -           Conditions          | 0.076s  | 2.708s  | 2.632s | 3463.16% | 35.63x  |
 | [#10](./examples/playbooks/10_blocks.yml) -              Blocks              | 0.051s  | 2.264s  | 2.213s | 4349.02% | 44.39x  |
 | [#11](./examples/playbooks/11_register.yml) -            Register Variables  | 0.014s  | 1.899s  | 1.885s | 13426.13%| 135.26x |
+| [#12](./examples/playbooks/12_templating.yml) -          Variable Templating | 0.019s  | 2.194s  | 2.175s | 11462.66%| 115.63x |
 
 > <sup>(1) ansible - ancible </sup>
 
@@ -152,7 +154,7 @@ Here are some features that are not strictly necessary to run playbooks, but the
 - [x] Colored Output
 - [ ] Better error handling and reporting
 - [ ] Support for roles and includes
-- [ ] Variable templating with Jinja2-like syntax
+- [x] Variable templating with Jinja2-like syntax
 
 ## License
 

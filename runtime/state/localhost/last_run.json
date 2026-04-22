@@ -1,10 +1,10 @@
 {
-  "task": "Condition based on the registered variable",
+  "task": "Run condition using templated expression",
   "changed": true,
   "failed": false,
   "msg": "Command executed successfully",
   "command": {
     "exit_code": 0,
-    "stdout": "condition matched for ancible-rocks "
+    "stdout": "templated condition matched "
   }
 }
