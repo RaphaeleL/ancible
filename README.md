@@ -9,7 +9,7 @@ A high-performance, C-based reimplementation of [Ansible](https://www.redhat.com
 - **Compatible Interface**: Uses the same YAML playbook format as Ansible
 - **Inventory Management**: Supports INI-style inventory files with groups
 - **Flexible Execution**: Run commands locally or remotely via SSH
-- **Module System**: Extensible module architecture (currently supports command/shell)
+- **Module System**: Extensible module architecture (currently supports command, shell, and file)
 - **State Tracking**: Maintains execution state and results in JSON format
 - **Cross-Platform**: Works on Linux, macOS, and other Unix-like systems
 - **Fast Startup**: No Python interpreter overhead, instant execution
@@ -83,6 +83,7 @@ ancible/
 │   └── transport/            # - Transport layer headers
 ├── modules/                  # Module implementations
 │   ├── command.c             # - Command module
+│   ├── file.c                # - File module
 │   └── module.c              # - Module system core
 ├── runtime/state/            # Runtime state storage Per-Host
 ├── tests/unit/               # Unit tests
@@ -140,7 +141,7 @@ Those features are necessary to run playbooks, they are not strictly necessary t
 While using the `command` module, you can run any command on the remote host, you can copy, use git or create files. Thereby we only need them to fully replace Ansible's functionality, but they are not strictly necessary to run playbooks, since the `command` module can execute any command. However, you can see this as an incentive to implement these modules.
 
 - [x] Command module
-- [ ] File module (create, delete, chmod)
+- [x] File module (create, delete, chmod)
 - [ ] Copy module
 - [ ] Template module
 - [ ] Service module

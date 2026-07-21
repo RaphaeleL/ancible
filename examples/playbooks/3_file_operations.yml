@@ -2,16 +2,19 @@
 - hosts: all
   tasks:
     - name: Create a temporary directory
-      command: mkdir -p /tmp/ancible_test
+      file: path=/tmp/ancible_test state=directory mode=0755
 
     - name: Create a test file
+      file: path=/tmp/ancible_test/hello.txt state=present mode=0644
+
+    - name: Seed the file content via command
       command: echo "Hello from Ancible" > /tmp/ancible_test/hello.txt
 
     - name: Check file content
       command: cat /tmp/ancible_test/hello.txt
 
-    - name: List files in the directory
-      command: ls -la /tmp/ancible_test
+    - name: Restrict file permissions
+      file: path=/tmp/ancible_test/hello.txt state=present mode=0600
 
     - name: Check file permissions
       command: stat -f "%Sp" /tmp/ancible_test/hello.txt || stat -c "%A" /tmp/ancible_test/hello.txt
@@ -21,3 +24,9 @@
 
     - name: Count lines in the file
       command: wc -l /tmp/ancible_test/hello.txt
+
+    - name: Remove the test file
+      file: path=/tmp/ancible_test/hello.txt state=absent
+
+    - name: Remove the temporary directory
+      file: path=/tmp/ancible_test state=absent

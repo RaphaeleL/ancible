@@ -5,6 +5,7 @@
 #include "../include/core/executor.h"
 #include "../include/core/condition.h"
 #include "../include/modules/command.h"
+#include "../include/modules/file.h"
 
 #define MAX_MODULES 32
 
@@ -45,6 +46,11 @@ int executor_init(void) {
     // Register built-in modules
     if (executor_register_module("command", command_module_exec) != ANCIBLE_SUCCESS) {
         fprintf(stderr, "Error: Failed to register command module\n");
+        return ANCIBLE_ERROR;
+    }
+    
+    if (executor_register_module("file", file_module_exec) != ANCIBLE_SUCCESS) {
+        fprintf(stderr, "Error: Failed to register file module\n");
         return ANCIBLE_ERROR;
     }
     
