@@ -1,0 +1,41 @@
+---
+- hosts: all
+  tasks:
+    - name: Create a temporary directory
+      file: path=/tmp/ancible_copy_demo state=directory mode=0755
+
+    - name: Seed a source file with copy content
+      copy: content='Hello from Ancible copy module' dest=/tmp/ancible_copy_demo/source.txt mode=0644
+
+    - name: Copy source file to destination
+      copy: src=/tmp/ancible_copy_demo/source.txt dest=/tmp/ancible_copy_demo/dest.txt mode=0644
+
+    - name: Verify copied content
+      command: cat /tmp/ancible_copy_demo/dest.txt
+
+    - name: Write content directly with copy
+      copy: content='Direct content write' dest=/tmp/ancible_copy_demo/direct.txt mode=0600
+
+    - name: Verify direct content
+      command: cat /tmp/ancible_copy_demo/direct.txt
+
+    - name: Idempotent copy should make no changes
+      copy: content='Direct content write' dest=/tmp/ancible_copy_demo/direct.txt mode=0600
+
+    - name: Update destination content
+      copy: content='Updated content' dest=/tmp/ancible_copy_demo/direct.txt
+
+    - name: Verify updated content
+      command: cat /tmp/ancible_copy_demo/direct.txt
+
+    - name: Clean up destination file
+      file: path=/tmp/ancible_copy_demo/dest.txt state=absent
+
+    - name: Clean up direct file
+      file: path=/tmp/ancible_copy_demo/direct.txt state=absent
+
+    - name: Clean up source file
+      file: path=/tmp/ancible_copy_demo/source.txt state=absent
+
+    - name: Clean up temporary directory
+      file: path=/tmp/ancible_copy_demo state=absent

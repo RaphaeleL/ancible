@@ -9,7 +9,7 @@ A high-performance, C-based reimplementation of [Ansible](https://www.redhat.com
 - **Compatible Interface**: Uses the same YAML playbook format as Ansible
 - **Inventory Management**: Supports INI-style inventory files with groups
 - **Flexible Execution**: Run commands locally or remotely via SSH
-- **Module System**: Extensible module architecture (currently supports command, shell, and file)
+- **Module System**: Extensible module architecture (currently supports command, shell, file, and copy)
 - **State Tracking**: Maintains execution state and results in JSON format
 - **Cross-Platform**: Works on Linux, macOS, and other Unix-like systems
 - **Fast Startup**: No Python interpreter overhead, instant execution
@@ -49,6 +49,7 @@ The `examples/playbooks/` directory contains several sample playbooks:
 - `10_blocks.yml` - Blocks in Playbooks
 - `11_register.yml` - Register: capture stdout/rc and use in `when`
 - `12_templating.yml` - Jinja2-like variable templating in args and `when`
+- `13_copy_operations.yml` - Copy module (src/dest and content)
 
 Run an example with:
 
@@ -83,6 +84,7 @@ ancible/
 │   └── transport/            # - Transport layer headers
 ├── modules/                  # Module implementations
 │   ├── command.c             # - Command module
+│   ├── copy.c                # - Copy module
 │   ├── file.c                # - File module
 │   └── module.c              # - Module system core
 ├── runtime/state/            # Runtime state storage Per-Host
@@ -116,6 +118,7 @@ Ancible has been benchmarked against Ansible for various playbooks. The results 
 | [#10](./examples/playbooks/10_blocks.yml) -              Blocks              | 0.051s  | 2.264s  | 2.213s | 4349.02% | 44.39x  |
 | [#11](./examples/playbooks/11_register.yml) -            Register Variables  | 0.014s  | 1.899s  | 1.885s | 13426.13%| 135.26x |
 | [#12](./examples/playbooks/12_templating.yml) -          Variable Templating | 0.019s  | 2.194s  | 2.175s | 11462.66%| 115.63x |
+| [#13](./examples/playbooks/13_copy_operations.yml) -     Copy Operations     | 0.019s  | 5.455s  | 5.436s | 28754.12%| 288.54x |
 
 > <sup>(1) ansible - ancible </sup>
 
@@ -142,7 +145,7 @@ While using the `command` module, you can run any command on the remote host, yo
 
 - [x] Command module
 - [x] File module (create, delete, chmod)
-- [ ] Copy module
+- [x] Copy module
 - [ ] Template module
 - [ ] Service module
 - [ ] Package module

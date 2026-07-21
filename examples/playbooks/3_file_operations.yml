@@ -5,7 +5,7 @@
       file: path=/tmp/ancible_test state=directory mode=0755
 
     - name: Create a test file
-      file: path=/tmp/ancible_test/hello.txt state=present mode=0644
+      file: path=/tmp/ancible_test/hello.txt state=file mode=0644
 
     - name: Seed the file content via command
       command: echo "Hello from Ancible" > /tmp/ancible_test/hello.txt
@@ -14,7 +14,7 @@
       command: cat /tmp/ancible_test/hello.txt
 
     - name: Restrict file permissions
-      file: path=/tmp/ancible_test/hello.txt state=present mode=0600
+      file: path=/tmp/ancible_test/hello.txt state=file mode=0600
 
     - name: Check file permissions
       command: stat -f "%Sp" /tmp/ancible_test/hello.txt || stat -c "%A" /tmp/ancible_test/hello.txt
