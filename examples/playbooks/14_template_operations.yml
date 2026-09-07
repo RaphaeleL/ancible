@@ -1,0 +1,7 @@
+- hosts: all
+  tasks:
+    - name: Render a greeting template
+      template: src=examples/templates/greeting.j2 dest=/tmp/ancible-greeting.txt mode=0644
+
+    - name: Cat the rendered greeting file
+      command: cat /tmp/ancible-greeting.txt

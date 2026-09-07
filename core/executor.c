@@ -7,6 +7,7 @@
 #include "../include/modules/command.h"
 #include "../include/modules/file.h"
 #include "../include/modules/copy.h"
+#include "../include/modules/template.h"
 
 #define MAX_MODULES 32
 
@@ -57,6 +58,11 @@ int executor_init(void) {
 
     if (executor_register_module("copy", copy_module_exec) != ANCIBLE_SUCCESS) {
         fprintf(stderr, "Error: Failed to register copy module\n");
+        return ANCIBLE_ERROR;
+    }
+
+    if (executor_register_module("template", template_module_exec) != ANCIBLE_SUCCESS) {
+        fprintf(stderr, "Error: Failed to register template module\n");
         return ANCIBLE_ERROR;
     }
     

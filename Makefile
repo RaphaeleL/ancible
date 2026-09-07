@@ -38,6 +38,7 @@ TEST_COMMAND = $(TEST_DIR)/test_command
 TEST_COMMAND_MODULE = $(TEST_DIR)/test_command_module
 TEST_FILE_MODULE = $(TEST_DIR)/test_file_module
 TEST_COPY_MODULE = $(TEST_DIR)/test_copy_module
+TEST_TEMPLATE_MODULE = $(TEST_DIR)/test_template_module
 TEST_EXECUTOR = $(TEST_DIR)/test_executor
 TEST_STATE = $(TEST_DIR)/test_state
 TEST_CONDITION = $(TEST_DIR)/test_condition
@@ -79,7 +80,7 @@ quiet_cmd_clean = CLEAN   $<
 .PHONY: all
 all: prepare $(ANCIBLE_PLAYBOOK) $(TEST_CLI) $(TEST_ARGS) $(TEST_PARSER) $(TEST_INVENTORY) \
       $(TEST_CONTEXT) $(TEST_RUNNER) $(TEST_SSH) $(TEST_COMMAND) \
-      $(TEST_COMMAND_MODULE) $(TEST_FILE_MODULE) $(TEST_COPY_MODULE) $(TEST_EXECUTOR) $(TEST_STATE) $(TEST_CONDITION) \
+      $(TEST_COMMAND_MODULE) $(TEST_FILE_MODULE) $(TEST_COPY_MODULE) $(TEST_TEMPLATE_MODULE) $(TEST_EXECUTOR) $(TEST_STATE) $(TEST_CONDITION) \
       $(TEST_BLOCKS)
 
 # Prepare directories
@@ -113,7 +114,7 @@ clean:
 .PHONY: test
 test: $(ANCIBLE_PLAYBOOK) $(TEST_CLI) $(TEST_ARGS) $(TEST_PARSER) $(TEST_INVENTORY) \
       $(TEST_CONTEXT) $(TEST_RUNNER) $(TEST_SSH) $(TEST_COMMAND) \
-      $(TEST_COMMAND_MODULE) $(TEST_FILE_MODULE) $(TEST_COPY_MODULE) $(TEST_EXECUTOR) $(TEST_STATE) $(TEST_CONDITION) \
+      $(TEST_COMMAND_MODULE) $(TEST_FILE_MODULE) $(TEST_COPY_MODULE) $(TEST_TEMPLATE_MODULE) $(TEST_EXECUTOR) $(TEST_STATE) $(TEST_CONDITION) \
       $(TEST_BLOCKS)
 	@echo "Running unit tests..."
 	$(Q)cd $(TEST_DIR) && ./test_cli
@@ -127,6 +128,7 @@ test: $(ANCIBLE_PLAYBOOK) $(TEST_CLI) $(TEST_ARGS) $(TEST_PARSER) $(TEST_INVENTO
 	$(Q)cd $(TEST_DIR) && ./test_command_module
 	$(Q)cd $(TEST_DIR) && ./test_file_module
 	$(Q)cd $(TEST_DIR) && ./test_copy_module
+	$(Q)cd $(TEST_DIR) && ./test_template_module
 	$(Q)cd $(TEST_DIR) && ./test_executor
 	$(Q)cd $(TEST_DIR) && ./test_state
 	$(Q)cd $(TEST_DIR) && ./test_condition
@@ -177,7 +179,11 @@ $(TEST_COPY_MODULE): $(TEST_DIR)/test_copy_module.c $(MODULES_DIR)/copy.o $(MODU
 	$(Q)printf " %s\n" "$(quiet_cmd_link)"
 	$(Q)$(cmd_link)
 
-$(TEST_EXECUTOR): $(TEST_DIR)/test_executor.c $(CORE_DIR)/executor.o $(CORE_DIR)/condition.o $(MODULES_DIR)/command.o $(MODULES_DIR)/file.o $(MODULES_DIR)/copy.o $(MODULES_DIR)/module.o $(TRANSPORT_DIR)/runner.o $(TRANSPORT_DIR)/ssh.o $(CORE_DIR)/context.o
+$(TEST_TEMPLATE_MODULE): $(TEST_DIR)/test_template_module.c $(MODULES_DIR)/template.o $(MODULES_DIR)/module.o $(CORE_DIR)/context.o $(TRANSPORT_DIR)/runner.o $(TRANSPORT_DIR)/ssh.o
+	$(Q)printf " %s\n" "$(quiet_cmd_link)"
+	$(Q)$(cmd_link)
+
+$(TEST_EXECUTOR): $(TEST_DIR)/test_executor.c $(CORE_DIR)/executor.o $(CORE_DIR)/condition.o $(MODULES_DIR)/command.o $(MODULES_DIR)/file.o $(MODULES_DIR)/copy.o $(MODULES_DIR)/template.o $(MODULES_DIR)/module.o $(TRANSPORT_DIR)/runner.o $(TRANSPORT_DIR)/ssh.o $(CORE_DIR)/context.o
 	$(Q)printf " %s\n" "$(quiet_cmd_link)"
 	$(Q)$(cmd_link)
 
@@ -189,6 +195,6 @@ $(TEST_CONDITION): $(TEST_DIR)/test_condition.c $(CORE_DIR)/condition.o $(CORE_D
 	$(Q)printf " %s\n" "$(quiet_cmd_link)"
 	$(Q)$(cmd_link)
 
-$(TEST_BLOCKS): $(TEST_DIR)/test_blocks.c $(CORE_DIR)/parser.o $(CORE_DIR)/executor.o $(CORE_DIR)/condition.o $(MODULES_DIR)/module.o $(MODULES_DIR)/command.o $(MODULES_DIR)/file.o $(MODULES_DIR)/copy.o $(TRANSPORT_DIR)/runner.o $(TRANSPORT_DIR)/ssh.o $(CORE_DIR)/context.o
+$(TEST_BLOCKS): $(TEST_DIR)/test_blocks.c $(CORE_DIR)/parser.o $(CORE_DIR)/executor.o $(CORE_DIR)/condition.o $(MODULES_DIR)/module.o $(MODULES_DIR)/command.o $(MODULES_DIR)/file.o $(MODULES_DIR)/copy.o $(MODULES_DIR)/template.o $(TRANSPORT_DIR)/runner.o $(TRANSPORT_DIR)/ssh.o $(CORE_DIR)/context.o
 	$(Q)printf " %s\n" "$(quiet_cmd_link)"
 	$(Q)$(cmd_link)

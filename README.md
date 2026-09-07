@@ -9,7 +9,7 @@ A high-performance, C-based reimplementation of [Ansible](https://www.redhat.com
 - **Compatible Interface**: Uses the same YAML playbook format as Ansible
 - **Inventory Management**: Supports INI-style inventory files with groups
 - **Flexible Execution**: Run commands locally or remotely via SSH
-- **Module System**: Extensible module architecture (currently supports command, shell, file, and copy)
+- **Module System**: Extensible module architecture (currently supports command, shell, file, copy, and template)
 - **State Tracking**: Maintains execution state and results in JSON format
 - **Cross-Platform**: Works on Linux, macOS, and other Unix-like systems
 - **Fast Startup**: No Python interpreter overhead, instant execution
@@ -50,6 +50,7 @@ The `examples/playbooks/` directory contains several sample playbooks:
 - `11_register.yml` - Register: capture stdout/rc and use in `when`
 - `12_templating.yml` - Jinja2-like variable templating in args and `when`
 - `13_copy_operations.yml` - Copy module (src/dest and content)
+- `14_template_operations.yml` - Template module (render a local template to a destination)
 
 Run an example with:
 
@@ -86,6 +87,7 @@ ancible/
 │   ├── command.c             # - Command module
 │   ├── copy.c                # - Copy module
 │   ├── file.c                # - File module
+│   ├── template.c            # - Template module
 │   └── module.c              # - Module system core
 ├── runtime/state/            # Runtime state storage Per-Host
 ├── tests/unit/               # Unit tests
@@ -146,7 +148,7 @@ While using the `command` module, you can run any command on the remote host, yo
 - [x] Command module
 - [x] File module (create, delete, chmod)
 - [x] Copy module
-- [ ] Template module
+- [x] Template module (render local templates with variables)
 - [ ] Service module
 - [ ] Package module
 - [ ] Git module
